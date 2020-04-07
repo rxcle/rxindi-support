@@ -51,4 +51,6 @@ ${#Comp1}${=FirstName} ${=LastName}${.}
 
 Output the picture of the first record to a picture fame named _ProfilePic_
 
+```
 ${=Record[1]/Picture,ProfilePic}
+```

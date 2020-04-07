@@ -3,10 +3,10 @@
 > Note: If you find issues or have suggestions for improving Rxindi then [give your feedback](https://github.com/rxcle/rxindi/issues).
 
 ## What is it
-Rxindi is an Adobe InDesign Extension that allows for powerful one-click data merge, document composition and dynamic processing of reusable InDesign templates based on content coming from a variety of formats.
+Rxindi is an [Adobe InDesign Extension](https://exchange.adobe.com/creativecloud.details.103684.rxindi.html) that allows for powerful one-click data merge, document composition and dynamic processing of reusable InDesign templates based on content coming from a variety of formats.
 
 ## How does it work
-1. Get the Rxindi InDesign Extension on Adobe Marketplace
+1. Get the [Rxindi InDesign Extension](https://exchange.adobe.com/creativecloud.details.103684.rxindi.html) on Adobe Marketplace
 2. Open its interface via `Window > Extensions > Rxindi`
 3. Create a template InDesign document with special placeholder statements inside text and on frames for any variable data or special automation that needs to occur
 4. Select a Data Source file
