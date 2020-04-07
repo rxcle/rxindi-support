@@ -55,10 +55,15 @@ In this example, _HasFirstName_, _FirstName_ and _LastName_ are XPath queries (t
 Download Rxindi from the Adobe Marketplace. During the preview phase Rxindi is available for free.
 
 ### Which versions of InDesign does it support
-Rxindi requires InDesign CC 2019 or newer. Both the MacOS and Windows versions are supported.
+Rxindi requires InDesign CC 2018 or newer. Both the MacOS and Windows versions are supported.
 
 ### More?
 This only scratches the surface of possibilities. Want to know more? See the included full user manual that is included with Rxindi.
+
+## Release Notes
+
+### v1.0.0
+- First release
 
 ---
 Copyright &copy; 2016-2020 [Rxcle](https://www.rxcle.com)
