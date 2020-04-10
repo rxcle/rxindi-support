@@ -20,6 +20,8 @@ Rxindi is simple to use, very lightweight and portable. The statements used for 
 
 Processing a prepared template document is an incredibly simple 2 step process: Select the data file and click "Process".
 
+[Introduction Video](https://www.youtube.com/watch?v=2Aye7q93Qc0)
+
 ## What about built in XML Import / Data Merge?
 Rxindi is not intended as a simple drop-in replacement for those. What Rxindi provides is a much more flexible approach to document composition. The input format can be anything (and be vastly different from the document structure) and automation using conditional/repeating behavior and special actions that need to occur based on the data can be specified. Because of the flexible nature of you can even combine XML Import / Data Merge with Rxcle, by doing a bulk import first and then do a fine-tune run using Rxcle.
 
@@ -39,12 +41,12 @@ Not at all. Although Rxindi is based on industry standards like XML and XPath, i
 ## Statement syntax
 Rxindi Statements consist of a single character (e.g. `=`, `?`) followed by arguments and can be used in inline text anywhere in the document. To distinguish them from regular content in text they are placed in a `${...}` placeholder, e.g. `${=FirstName}`. Statements may also be used on frames, in this case the target frame is referenced by its name using the `${}` statement. 
 
-Multiple statements can be separated with a semicolon or a newline: `=FirstName;=LastName`. For inline statements cab also be separated by placing them in separate placeholders: `${=FirstName} ${=LastName}`. Anything outside placeholders is treated as story content but a powerful feature of Rxindi is that it does participate in processing, e.g. when using conditionals (if-else), repeating content (loops) or components.
+Multiple statements are separated by placing them in separate placeholders: `${=FirstName} ${=LastName}` or by placing them in the same placeholder separated with a semicolon or a newline: `${=FirstName;=LastName}`. Anything outside placeholders is treated as story content but a powerful feature of Rxindi is that it does participate in processing, e.g. when using conditionals (if-else), repeating content (loops) or components.
 
 The following is an example with various statements an example that outputs "_FirstName_ _LastName_" or just "LastName"
 ```
-?HasFirstName; =FirstName; :;    =' ';   .;   =LastName
-^IF            ^OUTPUT     ^ELSE ^OUTPUT ^END ^OUTPUT
+${?HasFirstName}${=FirstName}${:}  ${=' ';   .;   =LastName}
+  ^IF             ^OUTPUT      ^ELSE ^OUTPUT ^END ^OUTPUT
 ```
 
 In this example, _HasFirstName_, _FirstName_ and _LastName_ are XPath queries (the path to an element) for the data source document that is to be used
@@ -58,7 +60,10 @@ Download Rxindi from the Adobe Marketplace. During the preview phase Rxindi is a
 Rxindi requires InDesign CC 2018 or newer. Both the MacOS and Windows versions are supported.
 
 ### More?
-This only scratches the surface of possibilities. Want to know more? See the included full user manual that is included with Rxindi.
+This only scratches the surface of possibilities. Want to know more? 
+
+- See the included full user manual that is included with Rxindi.
+- Watch video's on the [Rxcle YouTube Channel](https://www.youtube.com/channel/UCiSFFEuOoIQdk6mivM3eGkQ)
 
 ## Release Notes
 
