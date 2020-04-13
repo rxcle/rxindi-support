@@ -1,5 +1,7 @@
 # Rxindi
 
+[![Join the chat at https://gitter.im/rxindi/community](https://badges.gitter.im/rxindi/community.svg)](https://gitter.im/rxindi/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 > Note: If you find issues or have suggestions for improving Rxindi then [give your feedback](https://github.com/rxcle/rxindi/issues).
 
 ## What is it
