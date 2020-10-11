@@ -49,6 +49,8 @@ ${?HasFirstName}${=FirstName}${:}  ${=' ';   .;   =LastName}
 
 In this example, _HasFirstName_, _FirstName_ and _LastName_ are XPath queries (the path to an element) for the data source document that is to be used
 
+See the [full user manual](help.md) for more information.
+
 ## FAQ
 
 ### Where do I get it
@@ -63,7 +65,7 @@ If you find issues or have suggestions for improving Rxindi then [give your feed
 ### More?
 This only scratches the surface of possibilities. Want to know more? 
 
-- See the included full user manual that is included with Rxindi.
+- Read the [full user manual](help.md), which is also included with Rxindi.
 - Watch video's on the [Rxcle YouTube Channel](https://www.youtube.com/channel/UCiSFFEuOoIQdk6mivM3eGkQ)
 
 ## Examples
