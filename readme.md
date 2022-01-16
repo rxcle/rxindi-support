@@ -129,6 +129,12 @@ ${=Record[1]/Picture,ProfilePic}
 
 ### v1.0.0
 - First release
+    
+### v1.0.1
+- CC 2021 support
+    
+### v1.0.1
+- CC 2022 support
 
 ---
-Copyright &copy; 2016-2020 [Rxcle](https://www.rxcle.com)
+Copyright &copy; 2016-2022 [Rxcle](https://www.rxcle.com)
