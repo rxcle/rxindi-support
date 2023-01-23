@@ -1,14 +1,14 @@
-# Rxindi 1.0
+# Rxindi 1.1
 
 Rxindi provides a set of plain-text statements that can make any InDesign document into a dynamically processable document. Using the Rxindi InDesign Extension you can choose an Excel, CSV, XML or JSON file and, based on its contents process a template document repeatedly each time generating a different output document.
 
 This functionality is sometimes called a "Data Merge" or in more general terms "Document Composition". InDesign has built-in functionality for data merges via the Data Merge tool and via tagging and XML import but the system Rxindi provides is much more powerful; It allows a multitude of data source input formats and allows for true dynamic behavior by providing build in statements for explicit conditional and repeating behavior as well as the notion of reusable Components.
 
-No external tools or complex programming environments required to add Rxindi statements to an InDesign document. Documents with Rxindi statements are completely portable. There are no special extensions or plugins needed to open, edit or save your document. In order to process the statements you of course will need the Rxindi extension. Because Rxindi statements are so lightweight, you can easily use Rxindi alongside traditional data merges or additional external tools.
+No external tools or complex programming environments are required to add Rxindi statements to an InDesign document. Documents with Rxindi statements are completely portable. There are no special extensions or plugins needed to open, edit or save your document. In order to process the statements you will need the Rxindi extension. Because Rxindi statements are so lightweight, you can easily use Rxindi alongside traditional data merges or additional external tools.
 
 ## Data Source
 
-Most statements act upon a so called _Data Source_, which is simply a structured file of which the _structure_ must be relatively static and known upfront (the actual contents within the file can of course be dynamic). Statements will use absolute and relative _paths_ in the Data Source to get content. The actual Data Source file only needs to be loaded when processing a template document. 
+Most statements act upon a so called _Data Source_, which is a data file of which the _structure_ must be relatively static and known upfront. The actual contents within the file can of course be dynamic. Statements will use absolute and relative _paths_ in the Data Source to get content. The actual Data Source file only needs to be loaded when processing a template document. 
 
 The following file formats are supported as data source:
 
@@ -47,15 +47,15 @@ To output the first name of the first person in the data source to the document 
 ${=Person/FirstName} ${=Person/LastName} lives at ${=Person/Address}
 ```
 
-Note that the `Root` element from the Data Source is not specified in the reference. This is because `Root` is the default _context_ and references can be made relative to the current context. It is of course also possible to use absolute references, in which case the path to the first name would be `${=/Root/Person/FirstName}`.
+Note that the `Root` element from the Data Source is not specified in the reference. This is because `Root` is the default _context_ and references can be made relative to the current context. It is also possible to use absolute references, in which case the path to the first name becomes `${=/Root/Person/FirstName}`.
 
 > All Data Sources are interpreted as as XML on processing and all data references in Rxindi are XPath (1.0) queries. If the selected Data Source is in a different source format it is automatically and implicitly converted to XML using a standard conversion algorithm.
 
 ### Components
 
-Let's abstract the formatting of person details into a _Component_. We do this by creating a new Text Frame on an unused Master Spread (or alternatively on a non-printing layer). A Component is a uniquely named reusable set of content and statements. A text frame can contain multiple Components, but were just defining one for now. For our example let's create a Component named `PersonDetails`. 
+Let's abstract the formatting of person details into a _Component_. We do this by creating a new Text Frame on an unused Master Spread (or alternatively on a non-printing layer). A Component is a uniquely named reusable set of content and statements. A text frame can contain multiple Components, but we are just defining one for now. For our example let us create a Component named `PersonDetails`. 
 
-A Component is _defined_ using the `${#PersonDetails}...${.}` statement set. Inside the Text Frame let's format the text as follows: 
+A Component is _defined_ using the `${#PersonDetails}...${.}` statement set. Inside the Text Frame we can format the text as follows: 
 
 ```
 ${#PersonDetails}${=FirstName} ${=LastName} lives at ${=Address}{$.}
@@ -71,9 +71,9 @@ ${@PersonDetails}
 
 > Symbols like `=`, `#` and `@` specify the _Statement Type_ which should always be the first item in a `${...}` placeholder. 
 
-Components typically have a _data need_ which is the context on which data references inside the Component are relative to. In our example we have the data reference to `FirstName`, so we will need a context that provides an element with that name.
+Components typically have a _data need_ which is the context on which data references inside the Component are relative to. In our example we have a data reference to `FirstName`, so we will need a context that provides an element with that name.
 
-If we only reference the Component and specify nothing else then that Component will get the same data context as what is used at the place where we are referencing. In this case that is `/Root`, however in this particular case we want to provide the Component with `/Root/Person` as context so we can directly reference the `FirstName` element inside the Component thereby making the Component independent from any specific parent element in particular.
+If we only reference the Component and specify nothing else then that Component will get the same data context as what is used at the location where we are referencing. In this case that is `/Root`, however in this particular case we want to provide the Component with `/Root/Person` as context so we can directly reference the `FirstName` element inside the Component thereby making the Component independent from any specific parent element in particular.
 
 In order to provide a context, a comma is placed directly after the Component name and the path to the data that should be used as context is specified. In this case we want to provide `Person` (relative to `/Root`) as a context.
 
@@ -81,7 +81,7 @@ In order to provide a context, a comma is placed directly after the Component na
 ${@PersonDetails,Person}
 ```
 
-To make things more interesting let's use a Data Source with some more data:
+To make things more interesting let us use a Data Source with some more data:
 
 ```xml
 <Root>
@@ -100,33 +100,32 @@ To make things more interesting let's use a Data Source with some more data:
 
 The `Root` element now no longer contains a single child element but rather a _list_ of child elements. This has important implications for the data reference because we now have to specify _which_ `Person` we want to show the details of. Because data references are really _XPath Queries_ there are many ways to select a particular element, but in this case we'll keep it simple and simply specify the numeric index. This is done by appending the element name with `[...]` where `...` is the index number (starting at `1`).
 
-To create two instance of the `PersonDetails` component and fill them with the details of the two persons use:
+To create two instances of the `PersonDetails` component and fill them with the details of the two persons you can use:
 
 ```
 ${@PersonDetails,Person[1]}
 ${@PersonDetails,Person[2]}
 ```
 
-> What would happen if we don't provide a specific index, but keep the reference simply `${@PersonDetails,Person}`?<br/>The XPath query would match 2 elements in this case, both which are passed to a _single_ Component instance. Inside the Component we match any `FirstName`, which causes 2 elements to be found of which all data is concatenated. In other words the result would be `JohnJane SmithDoe lives at Baker Street 221AMain Street 101`. Not typically something you would want or expect (in most cases).
+> What would happen if we do not provide a specific index, but keep the reference simply `${@PersonDetails,Person}`?<br/>The XPath query on the data source would match 2 elements in this case, both which are passed to a _single_ Component instance. Inside the Component we match any `FirstName`, which cause 2 elements to be found of which all data is concatenated. In other words the result would be `JohnJane SmithDoe lives at Baker Street 221AMain Street 101`. Not typically something you would want or expect (in most cases).
 
 ### Conditionals
 
 If the specified data reference results in no data, it is simply replaced by _nothing_. If a Component reference has a data context reference that results in no data then the Component is not instantiated.
 
-This is the simplest form of conditionality, which relies entirely on the data that was requested and either places something or nothing.
+This is the simplest form of conditionality. It relies on the data that was requested being present or not and based on this either places something or nothing.
 
 There are two other scenarios though: 
-1. What if you want to decide whether or not to place data or a Component based on another piece of data than what is to be placed.
+1. What if you want to decide whether or not to place data or a Component based on an _other_ piece of data than what is to be placed.
 2. What if instead of placing nothing when there is no match to the reference, you want to place something else instead.
 
-
-We'll tackle the first scenario first. Given our Person example, say that Persons may have a title and there is an other element that specifies whether that title should be shown. 
+We will address the first scenario first. Given our Person example, say that a Person may have a title and there is an other element that specifies whether that title should be shown. 
 
 ```
 ${?HasTitle}${=Title}${.} ${=LastName}
 ```
 
-Let's break this down into it's pieces
+Let us break this down into its individual elements
 
 | Part           | Statement   | Description |
 |----------------|-------------|-------------|
@@ -135,7 +134,7 @@ Let's break this down into it's pieces
 | `${.}`         | `END`       | This ends the _statement block_ started by the `IF` statement. It is necessary here because otherwise _everything_ following the `IF` would be processed only if that evaluated to _true_. We only wanted the `OUTPUT` statement for the Title to be conditional though so that is why we end the block here.
 | `${=LastName}` | `OUTPUT`    | Output the value of `LastName`. Because this follows an `END` this statement is _not_ conditional and always processed.
 
-For the second scenario, let's work with an example where when the title is present the title instead of the first name should be shown.
+For the second scenario, let us use an example where when the title is present then that title instead of the first name should be shown.
 
 ```
 ${?HasTitle}${=Title}${:}${=FirstName}${.} ${=LastName}
@@ -160,7 +159,7 @@ Here the entire `IF`-`OUTPUT`-`ELSE`-`OUTPUT` set is placed in a single placehol
 ---
 ## User Interface
 
-The user interface of Rxindi consists of a single InDesign panel which can be opened via `Window > Extensions > Rxindi`. The panel consists of three sections which can be expanded and collapsed.
+The user interface of Rxindi consists of a single InDesign panel which can be opened via `Window > Extensions > Rxindi`. The panel has three sections which can be expanded and collapsed.
 
 - `Prepare`
     - This section has a quick reference guide of all available statements.
@@ -176,7 +175,8 @@ The user interface of Rxindi consists of a single InDesign panel which can be op
 
 The panel menu contains the following items:
 - `Help` : Opens a window with the help text
-- `Reload` : Forces a reload of Rxindi (Only needed in case of issues)
+- `Load into XML Structure` : Loads the current data source into InDesign's (XML) Structure
+- `Reinitialize` : Forces a reinitalization of Rxindi (Only needed in case of issues)
 - `Logs` : Opens the directory that contains the log files
 
 ---
@@ -220,10 +220,12 @@ Certain statements implicitly start a logical scope _Block_ in which all consecu
 Multiple statements can be placed in a single placeholder by separating them with a `;` sign. For example `${=FirstName;=LastName}` will give the same result as `${=FirstName}${=LastName}`.
 
 ### Literal Placeholder
-If you would want a literal placeholder-like `${...}` character combination in text, which should remain as is and _not_ be interpreted/replaced when processing the document with Rxindi you need to prefix it with a zero-width space (U+200B) or zero width non-joiner (U+200C) character. So `<ZWPS>${...}` (note that the zero-width space/non-joiner must be place directly before the opening `$` character).
+If you would want a literal placeholder-like `${...}` character combination in text, which should remain as is and _not_ be interpreted/replaced when processing the document with Rxindi you need to prefix it with a zero-width space (U+200B) or zero width non-joiner (U+200C) character. So `<ZWPS>${...}`. Note that the zero-width space/non-joiner must be place directly before the opening `$` character (so no other whitespace beteen it and the $ character).
 
 ## Frame Statements
-Statements can be placed in the Script Label of any frame. In order to process them the frame name itself must be prefixed with `$`. You can name frames in the _Layers_ panel of InDesign. In the Script Label the statements should appear without a placeholder (the show Script Label can be seen as the implicit and sole placeholder). The default target for statements in a Script Label is always the frame itself. This can of course be overridden by specifying an explicit target name per statement.
+Statements can be placed in the Script Label of any frame. In order to process them the frame name itself must be prefixed with (or alternatively be a single) `$`. You can name frames in the _Layers_ panel of InDesign. Note that other than the frame name starting with `$`, its name is otherwise irrelevant for Rxindi - the prefix is just a marker that it has statements that need to be processed.
+
+ In the Script Label the statements should appear without a placeholder - the Script Label itself can be seen as the implicit and sole placeholder. The default target for statements in a Script Label is always the frame itself. This can be overridden by specifying an explicit target name per statement.
 
 Frame Statements are always processed after all Story Statements have been processed and they are processed in the order in which they appear in InDesign _Layers_ panel. Text Frames can have Inline Statements as well as Frame Statements.
 
@@ -370,10 +372,10 @@ To halt further execution of processing from within a script, either return the 
 
 The third and further arguments to the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `params` array property on the `scriptArgs` to the script. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify parameters without specifying a different target, use the target name `<script>,.,<param>` or just an empty target: `<script>,,<param>`.
 
-**IMPORTANT** Scripts are no way limited to allowed actions within the document. This provides a lot of freedom and flexibility. However this also mean that Rxindi cannot track the changes made by a script to a document. Certain changes like removal of items or changes to _Notes_ (which are used by Rxindi during processing) may cause statements following a script to fail.
+**IMPORTANT** Scripts are in no way limited to allowed actions within the document. This provides a lot of freedom and flexibility. However this also means that Rxindi cannot track the changes made by a script to a document. Certain changes like removal of items or changes to _Notes_ (which are used by Rxindi during processing) may cause statements following a script to fail.
 
 ## ACTION (`!`)
-Executes a special action, typically on a _frame_ target (the current frame being the default choice). The first (and required) argument specifies the action type to execute. Note that an ACTION by itself is always executed, it has no condition of its own. In order to make it conditional (or run multiple times) place it after an `IF` or `LOOP` statement.
+Executes a special action, typically on a _frame_ target - the current frame being the default. The first (and required) argument specifies the action type to execute. Note that an ACTION by itself is always executed, it has no condition of its own. In order to make it conditional (or run multiple times) place it after an `IF` or `LOOP` statement.
 
 ```
  Syntax: !<type>(,target)
@@ -542,4 +544,14 @@ Becomes:
 To refer to the `Value` of the second row ("196") the following XPath is used `/Root/Sheet/Row[2]/Value`
 
 ---
- Copyright ® 2020 Rxcle. All Rights reserved.
+# Version history
+
+| Version | Changes |
+|---------|-----------------|
+| 1.1.0   | + InDesign 2023 support<br/>+ Apple Silicon support<br/>+ Load into XML Structure<br/>- Fix issues in manual and error messages<br/>- Restore userInteractionLevel after processing |
+| 1.0.2   | + InDesign 2022 support |
+| 1.0.1   | + InDesign 2021 support |
+| 1.0.0   | + Initial release       |
+
+---
+ Copyright ® 2020-2023 Rxcle. All Rights reserved.

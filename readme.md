@@ -57,7 +57,7 @@ See the [full user manual](help.md) for more information.
 Download Rxindi from the [Adobe Marketplace](https://exchange.adobe.com/creativecloud.details.103684.rxindi.html).
 
 ### Which versions of InDesign does it support
-Rxindi requires InDesign CC 2018 through CC 2020. Both the MacOS and Windows versions are supported.
+Rxindi requires InDesign CC 2018 through CC 2023. Both the MacOS and Windows versions are supported.
 
 ### Report bugs, request features
 If you find issues or have suggestions for improving Rxindi then [give your feedback](https://github.com/rxcle/rxindi/issues).
@@ -127,14 +127,20 @@ ${=Record[1]/Picture,ProfilePic}
 
 ## Release Notes
 
-### v1.0.0
-- First release
+### v1.0.3
+- CC 2023 support
+- Apple Silicon (M1/M2) support
+- Import data source into InDesign XML Structure
+- Bugfixes
+
+### v1.0.2
+- CC 2022 support
     
 ### v1.0.1
 - CC 2021 support
     
-### v1.0.1
-- CC 2022 support
+### v1.0.0
+- First release
 
 ---
-Copyright &copy; 2016-2022 [Rxcle](https://www.rxcle.com)
+Copyright &copy; 2016-2023 [Rxcle](https://www.rxcle.com)
