@@ -127,7 +127,15 @@ ${=Record[1]/Picture,ProfilePic}
 
 ## Release Notes
 
-### v1.0.3
+### 1.2.0
+- Major internal rewrite, resulting in much better/expected results and error handling
+- Validate target names before actual processing
+- Better handling of decimals in XLSX input
+
+### 1.1.1
+- Minor internal improvements
+
+### 1.1.0
 - CC 2023 support
 - Apple Silicon (M1/M2) support
 - Import data source into InDesign XML Structure

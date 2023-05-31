@@ -1,6 +1,6 @@
-# Rxindi 1.1
+# Rxindi 1.2
 
-Rxindi provides a set of plain-text statements that can make any InDesign document into a dynamically processable document. Using the Rxindi InDesign Extension you can choose an Excel, CSV, XML or JSON file and, based on its contents process a template document repeatedly each time generating a different output document.
+Rxindi provides a set of plain-text statements that can turn any InDesign document into a dynamically processable document. Using the Rxindi InDesign Extension you can choose an Excel, CSV, XML or JSON file and, based on its contents process a template document repeatedly each time generating a different output document.
 
 This functionality is sometimes called a "Data Merge" or in more general terms "Document Composition". InDesign has built-in functionality for data merges via the Data Merge tool and via tagging and XML import but the system Rxindi provides is much more powerful; It allows a multitude of data source input formats and allows for true dynamic behavior by providing build in statements for explicit conditional and repeating behavior as well as the notion of reusable Components.
 
@@ -21,13 +21,17 @@ For processing, XML is the _native_ format, other formats are internally convert
 
 ## Statements
 
-In order to distinguish Rxindi statements from regular content, they are placed in a _placeholder_. The generic Rxindi placeholder format is `${...}`, where `...` represents the actual statement(s). These placeholders can be used in any Story in your InDesign document.
+Selecting content from the Data Source and processing it in a certain way is achieved with Statements which are placed directly inside an InDesign story / text frame. Rxindi supports many different statements, like Output, If, Loop, and more. Every statement is associated with a single character, e.g. `=` is used for the Output statement.
+
+In order to distinguish Rxindi statements from regular content in an InDesign story, they are placed in a _placeholder_. The generic Rxindi placeholder format is `${...}`, where `...` represents the actual statement(s).
+
+Example: `Hello ${=FirstName}, your order is ${=OrderNo}`
 
 ## Getting started
 
 ### First steps: Output
 
-Content from the Data Source can be referenced using the `${=...}` placeholder statement, where `...` is the actual reference to the content in the form of forward slash delimited element names relative to the current context. 
+Content from the Data Source can be placed into a story using the `${=...}` placeholder statement, where `...` is the actual reference to the content in the form of forward slash delimited element names relative to the current context. 
 
 Let's use the following example XML Data Source:
 ```xml
@@ -184,20 +188,20 @@ The panel menu contains the following items:
 
 Rxindi performs its actions based on _statements_ (which are processing instructions) in a document. These statements can be placed in the Story of any Frame.
 
-In order to identify Rxindi statements in inline text and to distinguish them from other content they must be placed in a _placeholder_. Placeholders use a set of character combinations that is unlikely to occur in normal text. For Rxindi the placeholder syntax is `${...}` where the `...` marks the location where the actual statement goes. An example of an actual placeholder with statement is `${=FirstName}`. On processing this statement replaces the placeholder with the contents of a _FirstName_ element. Much more on this and the many other statements in the next chapter.
+In order to identify Rxindi statements in inline text and to distinguish them from other content they must be placed in a _placeholder_. Placeholders use a set of character combinations that is unlikely to occur in normal text. For Rxindi the placeholder syntax is `${...}` where the `...` marks the location where the actual statement goes. An example of an actual placeholder with statement is `${=FirstName}`. On processing this statement replaces the placeholder with the contents of a _FirstName_ element.
 
-> The difference between placeholders and statements is important: Placeholders only exist as a _container_ of statements, they perform no logic in itself. For instance `${}` is a valid placeholder which does nothing and `${blabla}` is a valid placeholder which contains an _invalid_ statement.
+> The difference between placeholders and statements is important: Placeholders only exist as a _container_ for Rxindi Statements; They perform no logic in itself. For instance `${}` is a valid placeholder which does nothing and `${blabla}` is a valid placeholder which contains an _invalid_ statement.
 
 ## Statements
-Statements perform the action processing logic. All statements start with a single symbol that indicates the statement type. This must be the first non whitespace character ...
+Statements specify the actual processing logic. All statements start with a single symbol that indicates the statement type. This must be the first non whitespace character ...
 - following a placeholder opening `${` 
 - following a multi-statement separator `;` (more on this later)
 - on the first non-empty line
 - following a _newline_
 
-Most statements also take arguments. The main argument directly follows the statement symbol (whitespace is allowed here, but for consistency we recommend against using it). Any additional arguments follow the main argument and are separated by a comma. Note that the _meaning_ (and thus allowed syntax) for arguments depend on the statement used.
+Almost all statements also take one or more arguments. The main argument directly follows the statement symbol (whitespace is allowed here). Any additional arguments follow the main argument and are separated by a comma. Note that the _meaning_ (and thus allowed syntax) for arguments depend on the statement type used.
 
-An example of a statement:
+An example of a statement with two arguments:
 
 ```
 ${@PersonDetails,Person[1]}
@@ -214,18 +218,18 @@ ${@PersonDetails,Person[1]}
 
 
 ### Blocks
-Certain statements implicitly start a logical scope _Block_ in which all consecutive statements are processed until the Block is closed. Blocks are either closed implicitly or explicitly. For example `IF` (`?`) will start a block. This means that everything following the `IF` statement is placed in a block and only gets processed if the `IF` is _true_. The block is implicitly closed by using an `ELSE` statement (this will actually start a _new_ implicit block) or explicitly using `END`. 
+Certain statements implicitly start a logical scope _Block_ in which all consecutive statements are processed until the Block is closed. Blocks are either closed implicitly or explicitly. For example `IF` (`?`) will start a block. This means that everything following the `IF` statement is placed in a block and only gets processed if the `IF` is _true_. The block is either explicitly closed using an `END` statement (`.`) or implicitly by using an `ELSE` statement; Which will actually start a _new_ implicit block. Additionally the end of an InDesign story also implicitly closes all open blocks. 
 
 ### Multiple Statements
 Multiple statements can be placed in a single placeholder by separating them with a `;` sign. For example `${=FirstName;=LastName}` will give the same result as `${=FirstName}${=LastName}`.
 
 ### Literal Placeholder
-If you would want a literal placeholder-like `${...}` character combination in text, which should remain as is and _not_ be interpreted/replaced when processing the document with Rxindi you need to prefix it with a zero-width space (U+200B) or zero width non-joiner (U+200C) character. So `<ZWPS>${...}`. Note that the zero-width space/non-joiner must be place directly before the opening `$` character (so no other whitespace beteen it and the $ character).
+If you would want a literal placeholder-like `${...}` character combination in text, which should remain as is and _not_ be interpreted/replaced when processing the document with Rxindi you need to prefix it with a zero-width space (U+200B) or zero width non-joiner (U+200C) character. So `<ZWPS>${...}`. Note that the zero-width space/non-joiner must be placed _immediately_ before the opening `$` character with no other characters or whitespace in between.
 
 ## Frame Statements
-Statements can be placed in the Script Label of any frame. In order to process them the frame name itself must be prefixed with (or alternatively be a single) `$`. You can name frames in the _Layers_ panel of InDesign. Note that other than the frame name starting with `$`, its name is otherwise irrelevant for Rxindi - the prefix is just a marker that it has statements that need to be processed.
+Statements can also be placed in the Script Label of any frame. In order to process them, the frame name itself must start with or be a single `$` character. You can name frames in the _Layers_ panel of InDesign. Note that the name itself (the text following the `$` character) is not interpreted by Rxindi and it can be anything - the prefix is just a marker that it has statements that need to be processed.
 
- In the Script Label the statements should appear without a placeholder - the Script Label itself can be seen as the implicit and sole placeholder. The default target for statements in a Script Label is always the frame itself. This can be overridden by specifying an explicit target name per statement.
+ In the Script Label the statements should appear without a placeholder - the Script Label itself can be seen as the implicit and sole placeholder. The default target for statements in a Script Label is always the frame itself. So using `=SomeData` on the frame, will set the contents of the frame to the value of `SomeData`. This can be overridden by specifying an explicit target name per statement.
 
 Frame Statements are always processed after all Story Statements have been processed and they are processed in the order in which they appear in InDesign _Layers_ panel. Text Frames can have Inline Statements as well as Frame Statements.
 
@@ -261,6 +265,8 @@ If only a path is provided then the content is output at the start point of the 
 - If the target frame is a QR Code frame, the output is used as new values for the QR Code. 
   - Only QR Codes of type Hyperlink and Text are supported.
 
+If used in a Script Label then the default target frame is the frame on which the Script Label is set. A different target frame can still be specified explicitly.
+
 ## IF (`?`)
 Include/Process all following content and placeholders only if the given expression resolves to a _truthy_ value. The `IF` statement starts an implicit _Block_, which ends either at the end of the current Story/Script or at the outermost matching `END` (`.`) or `ELSE` (`:`) statement.
 
@@ -268,9 +274,18 @@ Include/Process all following content and placeholders only if the given express
  Syntax: ?<xpath> 
 Example: ?/Root/Person/HasTitle;=Title
 ```
+The following results from the expression are considered a _false_ value:
+  - Non existing element or attribute
+  - Element or attribute with no or all-whitespace content
+  - Element with no child elements
+  - Value "0"
+  - Value "NaN"
+  - Value "false"
+
+All other results are considered a _true_ value.
 
 ## LOOP (`*`)
-Loop a number of times, or over the collection from the given expression. The `LOOP` statement starts an implicit _Block_, which ends either at the end of the current Story/Script or at the outermost matching `END` (`.`) statement. If the collection has no items or the number is equal to or less than `0` then the `LOOP` statement behaves as an `IF` with a _false_ value and the entire following block will be skipped.
+Loop over a collection or numeric value obtained from the given expression. The `LOOP` statement starts an implicit _Block_, which ends either at the end of the current Story/Script or at the outermost matching `END` (`.`) or `ELSE` (`:`) statement. If the collection has no items or the number is equal to or less than `0` then the `LOOP` statement behaves as an `IF` with a _false_ value and the entire following block will be skipped. If an `ELSE` statement is specified this will be executed instead.
 
 ```
   Syntax: *<xpath|number> 
@@ -280,35 +295,35 @@ Loop a number of times, or over the collection from the given expression. The `L
 
 Note that when looping over an expression result, the data context for the child block is automatically set to the current item iterated over. 
 
-The following attributes are automatically added and updated for the current context node:
+The following special attributes are available for expressions of the child block on the current context:
 
-The following automatic XPath variables are introduced for the child block on the current context: 
-
-| Attribute    | Type   | Meaning |
-|--------------|--------|---------|
-| `@rxc-index` | Number | The current index, starts at 1 
-| `@rxc-count` | Number | Total number of items in the loop
+| Attribute    | Type    | Meaning |
+|--------------|---------|---------|
+| `@rxc-index` | Number  | The current index, starts at 1 
+| `@rxc-count` | Number  | Total number of items in the loop
+| `@rxc-first` | Boolean | True only if the current iteration is over the first item
+| `@rxc-last`  | Boolean | True only if the current iteration is over the last item
 
 ## ELSE (`:`)
-Include/Process the following content and placeholders only if the given expression for the nearest matching `IF` resolved to a _false_ value. The `ELSE` statement ends the _Block_ started with `IF` and starts a new implicit _Block_, which ends either at the end of the current Story/Script or at the outermost matching `END` (`.`) or next `ELSE` (`:`) statement.
+Include/Process the following content and placeholders only if the given expression for the nearest matching `IF` or `LOOP` resolved to a _falsey_ value. The `ELSE` statement ends the _Block_ started with `IF` or `LOOP` and starts a new implicit _Block_, which ends either at the end of the current Story/Script or at the outermost matching `END` (`.`).
 
 ```
  Syntax: :
 Example: ?PreferFirstName;=FirstName;:;=LastName
 ```
-`ELSE` always uses the inverse condition of whatever is the result of the preceding `IF`. If you want a sub condition, simply use a new `IF` as the first child statement of the `ELSE`.
+When paired with an `IF`, `ELSE` always uses the inverse condition of whatever is the result of the preceding `IF`. If you want a sub condition, simply use a new `IF` as the first child statement of the `ELSE`.
 
-Using an `ELSE` without a matching preceding `IF` in the same parent Block will given an error.
+Using an `ELSE` without a matching preceding `IF` or `LOOP` in the same parent Block will given an error.
 
 ## COMPONENT (`#`)
-Use `COMPONENT` (`#`) to _define_ a Component, which is a collection of reusable statements and content that is to be instantiated one or multiple times as a single named unit. The Component statement starts an implicit _block_ containing the content and statements directly following the Component statement. As will other _block_ types, the the end of the definition is indicated explicitly using `END` (`.`) or implicit by the end of the current Story or end of the multi-statement Placeholder.
+Use `COMPONENT` (`#`) to _define_ a Component, which is a collection of reusable statements and content that is to be instantiated one or multiple times as a single named unit. The Component statement starts an implicit _block_ containing the content and statements directly following the Component statement. As will other _block_ types, the end of the definition is indicated explicitly using `END` (`.`) or implicitly by the end of the current Story or end of the multi-statement Placeholder.
 
 ```
  Syntax: #<componentName>
 Example: #CompA;=FirstName;.
 ```
 
-Note that Component definitions in of itself do nothing. You must explicitly reference a component in order for it to be instantiated and processed. Components can be instantiated using `PLACE` (`@`) by providing their name (and optionally data context) .
+Note that Component definitions in of itself do nothing. You must explicitly reference a component in order for it to be instantiated and processed. Components can be instantiated using `PLACE` (`@`) by providing their name and optionally data context.
 
 Because Component definitions are not part of the normal document content you can define them off-page, e.g. in a text frame on the pasteboard or on an otherwise unused master page. This is however not a strict requirement you can define Components in the same Story as where you reference them if you like. 
 
@@ -365,7 +380,7 @@ From within the script, the global ExtendScript variables `app` and `document` a
 | `document` | `Document`             | The InDesign Document currently being processed. Use `document.parent` to get the `Application` object
 | `name`     | `string`               | Name of the current script |
 | `context`  | `XML`                  | Current XML context
-| `target`   | `InsertionPoint|Frame` | Target for current script. For scripts called from within a Story, without an explicit target this will be an `InsertionPoint`. When called with a target frame name this will be a `TextFrame` or `SplineItem` (typically a `Rectangle`).
+| `target`   | `InsertionPoint` or `Frame` | Target for current script. For scripts called from within a Story, without an explicit target this will be an `InsertionPoint`. When called with a target frame name this will be a `TextFrame` or `SplineItem` (typically a `Rectangle`).
 | `params`   | `Array`                | Array of parameters passed to the script.
 
 To halt further execution of processing from within a script, either return the `boolean` value `false` or `throw` an `Error` object.
@@ -384,7 +399,7 @@ Example: !hide
          !pstyle:Heading
 ```
 
-Below is a list of all available actions. Note that some actions take a parameter which is separated from the action type using a colon. Do not confuse the action parameter (colon) with statement arguments (separated by a comma) or statement separators in a placeholder (semicolon). Action type names are given here in all lowercase, but they are case-insensitive.
+Below is a list of all available actions. Note that some actions take a parameter which is separated from the action type using a colon `:`. Do not confuse the action parameter (colon) with statement arguments (separated by a comma) or statement separators in a placeholder (semicolon). Action type names are given here in all lowercase, but they are case-insensitive.
 
 | Action Type     | Description |
 |-----------------|-------------|
@@ -547,7 +562,9 @@ To refer to the `Value` of the second row ("196") the following XPath is used `/
 # Version history
 
 | Version | Changes |
-|---------|-----------------|
+|---------|---------|
+| 1.2.0   | - Major internal rewrite, resulting in much better/expected results and error handling<br/>- Validate target names before actual processing<br/>- Better handling of decimals in XLSX input |
+| 1.1.1   | - Minor internal improvements |
 | 1.1.0   | + InDesign 2023 support<br/>+ Apple Silicon support<br/>+ Load into XML Structure<br/>- Fix issues in manual and error messages<br/>- Restore userInteractionLevel after processing |
 | 1.0.2   | + InDesign 2022 support |
 | 1.0.1   | + InDesign 2021 support |
