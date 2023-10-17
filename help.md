@@ -563,6 +563,7 @@ To refer to the `Value` of the second row ("196") the following XPath is used `/
 
 | Version | Changes |
 |---------|---------|
+| 1.2.1   | + InDesign 2024 support |
 | 1.2.0   | - Major internal rewrite, resulting in much better/expected results and error handling<br/>- Validate target names before actual processing<br/>- Better handling of decimals in XLSX input |
 | 1.1.1   | - Minor internal improvements |
 | 1.1.0   | + InDesign 2023 support<br/>+ Apple Silicon support<br/>+ Load into XML Structure<br/>- Fix issues in manual and error messages<br/>- Restore userInteractionLevel after processing |

@@ -127,6 +127,9 @@ ${=Record[1]/Picture,ProfilePic}
 
 ## Release Notes
 
+### 1.2.1
+- InDesign 2024 support
+
 ### 1.2.0
 - Major internal rewrite, resulting in much better/expected results and error handling
 - Validate target names before actual processing
