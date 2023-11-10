@@ -1,4 +1,4 @@
-# Rxindi 1.2
+# Rxindi 1.3
 
 Rxindi provides a set of plain-text statements that can turn any InDesign document into a dynamically processable document. Using the Rxindi InDesign Extension you can choose an Excel, CSV, XML or JSON file and, based on its contents process a template document repeatedly each time generating a different output document.
 
@@ -247,6 +247,7 @@ Frame Statements are always processed after all Story Statements have been proce
 | END       | `.` | `none` | End block started by COMPONENT, IF, LOOP or ELSE.
 | SCRIPT    | `&` | `1: ` Script name `(req)`<br/>`2:` Target name `(opt)`<br/>`3+`: XPath Expressions `(opt)` | Execute the external script with the given name, optionally passing a specific target and/or the result of any number of XPath Expressions.
 | ACTION    | `!` | `1: ` Action type `(req)`<br/>`2:` Target name `(opt)` | Execute an action of the given type, optionally on a specific target.
+| ROWREPEAT | `-` | `1:` XPath Expression `(req)`<br/> `or 1:` Number > 0 `(req)` | Repeat parent table row based on iteration over expression or number
 
 
 ## OUTPUT (`=`)
@@ -366,7 +367,7 @@ Example: ?IsTrue;=FirstName;.
 Executes an external script.
 
 ```
- Syntax: &<name>,(<target>),(<params>...)
+ Syntax: &<name>,(<target>),(<args>...)
 Example: &AddPages
          &PlacePicture,pictureFrame,string('Alt text')
 ```
@@ -381,11 +382,11 @@ From within the script, the global ExtendScript variables `app` and `document` a
 | `name`     | `string`               | Name of the current script |
 | `context`  | `XML`                  | Current XML context
 | `target`   | `InsertionPoint` or `Frame` | Target for current script. For scripts called from within a Story, without an explicit target this will be an `InsertionPoint`. When called with a target frame name this will be a `TextFrame` or `SplineItem` (typically a `Rectangle`).
-| `params`   | `Array`                | Array of parameters passed to the script.
+| `args`   | `Array`                | Array of arguments passed to the script.
 
 To halt further execution of processing from within a script, either return the `boolean` value `false` or `throw` an `Error` object.
 
-The third and further arguments to the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `params` array property on the `scriptArgs` to the script. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify parameters without specifying a different target, use the target name `<script>,.,<param>` or just an empty target: `<script>,,<param>`.
+The third and further arguments to the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `args` array property on the `scriptArgs` to the script. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify arguments without specifying a different target, use the target name `<script>,.,<arg>` or just an empty target: `<script>,,<arg>`.
 
 **IMPORTANT** Scripts are in no way limited to allowed actions within the document. This provides a lot of freedom and flexibility. However this also means that Rxindi cannot track the changes made by a script to a document. Certain changes like removal of items or changes to _Notes_ (which are used by Rxindi during processing) may cause statements following a script to fail.
 
@@ -399,7 +400,7 @@ Example: !hide
          !pstyle:Heading
 ```
 
-Below is a list of all available actions. Note that some actions take a parameter which is separated from the action type using a colon `:`. Do not confuse the action parameter (colon) with statement arguments (separated by a comma) or statement separators in a placeholder (semicolon). Action type names are given here in all lowercase, but they are case-insensitive.
+Below is a list of all available actions. Note that some actions take an additional argument which is separated from the action type using a colon `:`. Do not confuse the action argument (colon) with statement arguments (separated by a comma) or statement separators in a placeholder (semicolon). Action type names are given here in all lowercase, but they are case-insensitive.
 
 | Action Type     | Description |
 |-----------------|-------------|
@@ -409,6 +410,28 @@ Below is a list of all available actions. Note that some actions take a paramete
 | `ostyle:<name>` | Apply the Object Style with the specified name to the target frame.
 | `cstyle:<name>` | Apply the Character Style with the specified name to the target.
 | `pstyle:<name>` | Apply the Paragraph Style with the specified name to the target.
+
+## ROWREPEAT (`-`)
+Loop over a collection or numeric value obtained from the given expression and repeats table row for each value. The `ROWREPEAT` statement starts an implicit _Block_ on the entire row, which cannot be terminated explicitly, meaning that `ELSE` and `END` are _not_ supported for the `ROWREPEAT` itself (they are supported for any child statement on the row).
+
+If the collection has no items or the number is equal to or less than `0` then the row on wich the statement is defined is removed. The statement must always be the first statement in the first cell of a table row and a table row can contain only one `ROWREPEAT` statement, it is valid to have multiple rows in the same table with `ROWREPEAT` statements though.
+
+```
+  Syntax: -<xpath|number>
+ Example: -/Root/Person
+          -5
+```
+
+Note that when looping over an expression result, the data context for the whole row is automatically set to the current item iterated over. 
+
+The following special attributes are available for expressions of the child block on the current context (these are the same as what is available for `LOOP`):
+
+| Attribute    | Type    | Meaning |
+|--------------|---------|---------|
+| `@rxc-index` | Number  | The current index, starts at 1 
+| `@rxc-count` | Number  | Total number of items in the loop
+| `@rxc-first` | Boolean | True only if the current iteration is over the first item
+| `@rxc-last`  | Boolean | True only if the current iteration is over the last item
 
 ---
 # Data Source Reference 
@@ -563,13 +586,48 @@ To refer to the `Value` of the second row ("196") the following XPath is used `/
 
 | Version | Changes |
 |---------|---------|
+| 1.3.0   | + New ROWREPEAT statement ${-...}<br/>+ Append instead of replace on OUTPUT to frame<br/>- Fix issue with LOOP in script label<br/>- Correct auto-closing behavior of block statements in (nested) tables<br/>- Simplify comparison syntax on IF statements |
 | 1.2.1   | + InDesign 2024 support |
-| 1.2.0   | - Major internal rewrite, resulting in much better/expected results and error handling<br/>- Validate target names before actual processing<br/>- Better handling of decimals in XLSX input |
-| 1.1.1   | - Minor internal improvements |
+| 1.2.0   | + Major internal rewrite, resulting in much better/expected results and error handling<br/>+ Validate target names before actual processing<br/>+ Better handling of decimals in XLSX input |
+| 1.1.1   | + Minor internal improvements |
 | 1.1.0   | + InDesign 2023 support<br/>+ Apple Silicon support<br/>+ Load into XML Structure<br/>- Fix issues in manual and error messages<br/>- Restore userInteractionLevel after processing |
 | 1.0.2   | + InDesign 2022 support |
 | 1.0.1   | + InDesign 2021 support |
 | 1.0.0   | + Initial release       |
+
+## What's new in v1.3
+
+### ROWREPEAT statement
+A new statement type has been add: ROWREPEAT, syntax `${-SomeCondition}`. This statement must be placed as the first statement in the first cell of a row in a table. When executed, the whole row on which the statement is set will be repeated the number of times the condition returns items or a positive numeric value. This is somewhat similar to `LOOP`, but where `LOOP` repeats its _child_ content and statements, `ROWREPEAT` repeats its _parent_ row.
+
+### LOOP improvements
+Using a LOOP (*) statement on the script label of a frame in previous version could result in an error or broken behavior. This now works as expected.
+
+### OUTPUT improvements
+When targeting a text frame with the OUTPUT statement, e.g. `${=LastName,SomeFrame}` (where "SomeFrame" is a frame name) then in previous versions the existing content of that frame would always be replaced by the result of the `LastName` data path query. This behavior was inconsistent with behavior of OUTPUT in a story, which always appends. Additionally when using OUTPUT with a target frame in a LOOP the result would be that only the result of the latest OUTPUT call would end up in the target frame, with no option of appending/combining texts. 
+
+Starting from this version, OUTPUT always appends to existing text when targeting a frame, meaning that existing text in the frame, either from the original template document or from preceding Rxindi statements, will remain intact. The behavior for OUTPUT statements in a story without a specific target remains unchanged.
+
+> `!` This is a _breaking_ behavioral change compared to v1.2 and earlier
+
+### Improved Auto-closing behavior in table cells
+In previous versions block statements like IF `?` and LOOP `*` in table cells, which were not explicitly closed with and END `.` within the same cell could "bleed-over" into consecutive cells or even following the whole table, which could lead to unexpected/undesriable results.
+
+With the improvements in this release, all blocks that are opened in a cell are closed automatically in that same cell, even if no explicit END is specified. 
+
+Example: If the "Condition" is _false_ in the first cell of the table then the "Value" in the second cell and the "Value" following the whole table would not be output in previous versions. To make this work correctly, the first cell MUST have an "END" statement `${.}`. 
+
+```
+|-----------------|-----------|
+| ${?Condition} A | {$=Value} |
+|-----------------|-----------|
+${=Value}
+```
+
+Starting from this release each cell has a contained context, and an explicit END statement can be ommitted. This means that the example above will output both "Value" regardless of the Condition used in the first cell of the table.
+
+### Simplify comparison syntax on IF statements
+Previously in order to compare the value of certain input data to a specific value in an IF statement, you had to cast the result of the XPath expression explicitly to a boolean, leading to the somewhat verbose syntax `${?boolean(SomeValue='OK')}`. Starting from this version this is done automatically, meaning that the previous example can be simplified to `${?SomeValue='OK'}`. The explicit cast from previous versions is also still supported.
 
 ---
  Copyright ® 2020-2023 Rxcle. All Rights reserved.

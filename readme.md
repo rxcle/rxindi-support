@@ -57,7 +57,7 @@ See the [full user manual](help.md) for more information.
 Download Rxindi from the [Adobe Marketplace](https://exchange.adobe.com/creativecloud.details.103684.rxindi.html).
 
 ### Which versions of InDesign does it support
-Rxindi requires InDesign CC 2018 through CC 2023. Both the MacOS and Windows versions are supported.
+Rxindi requires InDesign CC 2018 or newer. Both the MacOS and Windows versions are supported.
 
 ### Report bugs, request features
 If you find issues or have suggestions for improving Rxindi then [give your feedback](https://github.com/rxcle/rxindi/issues).
@@ -67,6 +67,7 @@ This only scratches the surface of possibilities. Want to know more?
 
 - Read the [full user manual](help.md), which is also included with Rxindi.
 - Watch video's on the [Rxcle YouTube Channel](https://www.youtube.com/channel/UCiSFFEuOoIQdk6mivM3eGkQ)
+- Homepage on [Rxcle website](https://rxcle.com/rxindi)
 
 ## Examples
 
@@ -126,6 +127,13 @@ ${=Record[1]/Picture,ProfilePic}
 ```
 
 ## Release Notes
+
+### 1.3.0
+- New ROWREPEAT statement `${-...}`
+- Append instead of replace on OUTPUT to frame
+- Fix issue with LOOP in script label
+- Correct auto-closing behavior of block statements in (nested) tables
+- Simplify comparison syntax on IF statements
 
 ### 1.2.1
 - InDesign 2024 support
