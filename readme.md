@@ -1,10 +1,10 @@
 # Rxindi
 
 ## What is it
-Rxindi is an [Adobe InDesign Extension](https://exchange.adobe.com/creativecloud.details.103684.rxindi.html) that allows for powerful one-click data merge, document composition and dynamic processing of reusable InDesign templates based on content coming from a variety of formats.
+Rxindi is an [Adobe InDesign Extension](https://exchange.adobe.com/apps/cc/103684/rxindi) that allows for powerful one-click data merge, document composition and dynamic processing of reusable InDesign templates based on content coming from a variety of formats.
 
 ## How does it work
-1. Get the [Rxindi InDesign Extension](https://exchange.adobe.com/creativecloud.details.103684.rxindi.html) on Adobe Marketplace
+1. Get the [Rxindi InDesign Extension](https://exchange.adobe.com/apps/cc/103684/rxindi) on Adobe Marketplace
 2. Open its interface via `Window > Extensions > Rxindi`
 3. Create a template InDesign document with special placeholder statements inside text and on frames for any variable data or special automation that needs to occur
 4. Select a Data Source file
@@ -18,7 +18,9 @@ Rxindi is simple to use, very lightweight and portable. The statements used for 
 
 Processing a prepared template document is an incredibly simple 2 step process: Select the data file and click "Process".
 
-[Introduction Video](https://www.youtube.com/watch?v=2Aye7q93Qc0)
+More info:
+- [Introduction Video](https://www.youtube.com/watch?v=vKoO6myjOyQ)
+- [Full user manual](help.md)
 
 ## What about built in XML Import / Data Merge?
 Rxindi is not intended as a simple drop-in replacement for those. What Rxindi provides is a much more flexible approach to document composition. The input format can be anything (and be vastly different from the document structure) and automation using conditional/repeating behavior and special actions that need to occur based on the data can be specified. Because of the flexible nature of you can even combine XML Import / Data Merge with Rxcle, by doing a bulk import first and then do a fine-tune run using Rxcle.
