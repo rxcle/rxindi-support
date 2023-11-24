@@ -130,6 +130,9 @@ ${=Record[1]/Picture,ProfilePic}
 
 ## Release Notes
 
+### 1.3.1
+- Fix issue with incorrectly reported multiple ROWREPEAT statements for a row
+
 ### 1.3.0
 - New ROWREPEAT statement `${-...}`
 - Append instead of replace on OUTPUT to frame

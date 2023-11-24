@@ -586,6 +586,7 @@ To refer to the `Value` of the second row ("196") the following XPath is used `/
 
 | Version | Changes |
 |---------|---------|
+| 1.3.1   | - Fix issue with incorrectly reported multiple ROWREPEAT statements for a row |
 | 1.3.0   | + New ROWREPEAT statement ${-...}<br/>+ Append instead of replace on OUTPUT to frame<br/>- Fix issue with LOOP in script label<br/>- Correct auto-closing behavior of block statements in (nested) tables<br/>- Simplify comparison syntax on IF statements |
 | 1.2.1   | + InDesign 2024 support |
 | 1.2.0   | + Major internal rewrite, resulting in much better/expected results and error handling<br/>+ Validate target names before actual processing<br/>+ Better handling of decimals in XLSX input |
