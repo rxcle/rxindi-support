@@ -382,11 +382,11 @@ From within the script, the global ExtendScript variables `app` and `document` a
 | `name`     | `string`               | Name of the current script |
 | `context`  | `XML`                  | Current XML context
 | `target`   | `InsertionPoint` or `Frame` | Target for current script. For scripts called from within a Story, without an explicit target this will be an `InsertionPoint`. When called with a target frame name this will be a `TextFrame` or `SplineItem` (typically a `Rectangle`).
-| `args`   | `Array`                | Array of arguments passed to the script.
+| `params`   | `Array`                | Array of additional parameter arguments passed to the script.
 
 To halt further execution of processing from within a script, either return the `boolean` value `false` or `throw` an `Error` object.
 
-The third and further arguments to the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `args` array property on the `scriptArgs` to the script. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify arguments without specifying a different target, use the target name `<script>,.,<arg>` or just an empty target: `<script>,,<arg>`.
+The third and further arguments to the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `params` array property on the `scriptArgs` to the script, where the result of the third argument for `SCRIPT` is the first (zeroth index) value on `scriptArgs.params`. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify parameter arguments without specifying a different target, just use an empty target argument: `<script>,,<args>`.
 
 **IMPORTANT** Scripts are in no way limited to allowed actions within the document. This provides a lot of freedom and flexibility. However this also means that Rxindi cannot track the changes made by a script to a document. Certain changes like removal of items or changes to _Notes_ (which are used by Rxindi during processing) may cause statements following a script to fail.
 
@@ -586,6 +586,7 @@ To refer to the `Value` of the second row ("196") the following XPath is used `/
 
 | Version | Changes |
 |---------|---------|
+| 1.3.2   | - Fix for data file paths containing a single quote<br/>- Fix clearing of previous result for Load into XML Structure<br/>- Fail instead of ignore if file for SCRIPT not found |
 | 1.3.1   | - Fix issue with incorrectly reported multiple ROWREPEAT statements for a row |
 | 1.3.0   | + New ROWREPEAT statement ${-...}<br/>+ Append instead of replace on OUTPUT to frame<br/>- Fix issue with LOOP in script label<br/>- Correct auto-closing behavior of block statements in (nested) tables<br/>- Simplify comparison syntax on IF statements |
 | 1.2.1   | + InDesign 2024 support |

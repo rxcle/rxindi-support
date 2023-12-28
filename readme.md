@@ -130,6 +130,11 @@ ${=Record[1]/Picture,ProfilePic}
 
 ## Release Notes
 
+### 1.3.2
+- Fix for data file paths containing a single quote
+- Fix clearing of previous result for Load into XML Structure
+- Fail instead of ignore if file for SCRIPT not found
+
 ### 1.3.1
 - Fix issue with incorrectly reported multiple ROWREPEAT statements for a row
 
