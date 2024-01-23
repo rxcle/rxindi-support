@@ -1,47 +1,35 @@
 # Rxindi
 
-## What is it
 Rxindi is an [Adobe InDesign Extension](https://exchange.adobe.com/apps/cc/103684/rxindi) that allows for powerful one-click data merge, document composition and dynamic processing of reusable InDesign templates based on content coming from a variety of formats.
 
-## How does it work
 1. Get the [Rxindi InDesign Extension](https://exchange.adobe.com/apps/cc/103684/rxindi) on Adobe Marketplace
-2. Open its interface via `Window > Extensions > Rxindi`
-3. Create a template InDesign document with special placeholder statements inside text and on frames for any variable data or special automation that needs to occur
-4. Select a Data Source file
-    - Excel (XLSX)
-    - CSV (Comma separated plain text)
-    - XML
-    - JSON
-5. Process the template
+2. Open its interface via `Window` `>` `Extensions` `>` `Rxindi`
+3. Create a template InDesign document with special placeholder statements inside text frames for any variable data or automation that needs to occur
+4. Select a Data Source file: Excel (XLSX), CSV, XML or JSON
+5. Process the document
 
 Rxindi is simple to use, very lightweight and portable. The statements used for the processing instructions are all plain text and stored within you regular InDesign documents. No special plugins are needed to write them or to open/edit documents that contain them.
 
-Processing a prepared template document is an incredibly simple 2 step process: Select the data file and click "Process".
-
-More info:
-- [Introduction Video](https://www.youtube.com/watch?v=vKoO6myjOyQ)
-- [Full user manual](help.md)
-
-## What about built in XML Import / Data Merge?
-Rxindi is not intended as a simple drop-in replacement for those. What Rxindi provides is a much more flexible approach to document composition. The input format can be anything (and be vastly different from the document structure) and automation using conditional/repeating behavior and special actions that need to occur based on the data can be specified. Because of the flexible nature of you can even combine XML Import / Data Merge with Rxcle, by doing a bulk import first and then do a fine-tune run using Rxcle.
-
-## What kind of statements/actions does Rxindi allow me to perform?
-- Output arbitrary content from the source document
-- Reusable content components (define a text snippet once and use it many times with different content)
-- Conditional content (if-else)
-- Repeating content (loops)
-- Automatically execute custom scripts on inline text or frames
-- Dynamically Hide/Show frames
-- Dynamically apply Object/Paragraph/Character styles
-- Dynamically choose a State for Multi-state objects
-
-## Do I need programming experience
-Not at all. Although Rxindi is based on industry standards like XML and XPath, its statement syntax is simple enough for anyone to learn and use. If you do have some programming knowledge you can leverage more advanced techniques like creating custom scripts that can be easily integrated into processing. 
+## Capabilities
+- Use XML, CSV, JSON or XLSX as input data
+- OUTPUT arbitrary content from the selected data file (using XPath) to:
+    - Text
+    - Images
+    - QR Codes
+- Conditional content (IF-ELSE)
+- Repeat content (LOOP)
+- Generate table rows (ROWREPEAT)
+- Create and reuse content COMPONENTs: Define a snippet once and use it many times with different data
+- Automatically execute custom SCRIPTs on inline text or frames
+- Perform special ACTIONs such as:
+    - Dynamically Hide/Show frames
+    - Apply Object/Paragraph/Character/Table/Cell styles
+    - Dynamically choose a State for Multi-state objects
 
 ## Statement syntax
-Rxindi Statements consist of a single character (e.g. `=`, `?`) followed by arguments and can be used in inline text anywhere in the document. To distinguish them from regular content in text they are placed in a `${...}` placeholder, e.g. `${=FirstName}`. Statements may also be used on frames, in this case the target frame is referenced by its name using the `${}` statement. 
+Rxindi Statements consist of a single character (e.g. `=`, `?`) followed by arguments and can be used in inline text anywhere in the document. To separate them from regular content in text they are placed in a `${...}` placeholder, e.g. `${=FirstName}`.
 
-Multiple statements are separated by placing them in separate placeholders: `${=FirstName} ${=LastName}` or by placing them in the same placeholder separated with a semicolon or a newline: `${=FirstName;=LastName}`. Anything outside placeholders is treated as story content but a powerful feature of Rxindi is that it does participate in processing, e.g. when using conditionals (if-else), repeating content (loops) or components.
+Multiple statements are separated by placing them in separate placeholders: `${=FirstName} ${=LastName}` or by placing them in the same placeholder separated with a semicolon or a newline: `${=FirstName;=LastName}`. Anything outside placeholders is treated as story content, but a powerful feature of Rxindi is that it does participate in processing, e.g. when using conditionals (IF-ELSE), repeating content (LOOP) or Components.
 
 The following is an example with various statements an example that outputs "_FirstName_ _LastName_" or just "LastName"
 ```
@@ -51,125 +39,8 @@ ${?HasFirstName}${=FirstName}${:}  ${=' ';   .;   =LastName}
 
 In this example, _HasFirstName_, _FirstName_ and _LastName_ are XPath queries (the path to an element) for the data source document that is to be used
 
-See the [full user manual](help.md) for more information.
-
-## FAQ
-
-### Where do I get it
-Download Rxindi from the [Adobe Marketplace](https://exchange.adobe.com/creativecloud.details.103684.rxindi.html).
-
-### Which versions of InDesign does it support
-Rxindi requires InDesign CC 2018 or newer. Both the MacOS and Windows versions are supported.
-
-### Report bugs, request features
-If you find issues or have suggestions for improving Rxindi then [give your feedback](https://github.com/rxcle/rxindi/issues).
-
-### More?
-This only scratches the surface of possibilities. Want to know more? 
-
-- Read the [full user manual](help.md), which is also included with Rxindi.
+## More info
+- Read the [full user manual](help.md), which is also included with Rxindi
 - Watch video's on the [Rxcle YouTube Channel](https://www.youtube.com/channel/UCiSFFEuOoIQdk6mivM3eGkQ)
 - Homepage on [Rxcle website](https://rxcle.com/rxindi)
-
-## Examples
-
-### Data Source
-
-```xml
-<Data>
-    <Record id="1">
-        <FirstName>Jane</FirstName>
-        <LastName>Doe</LastName>
-        <SpecialAccess>1</SpecialAccess>
-        <Picture>imgs/001.jpg</Picture>
-    </Record>
-    <Record id="2">
-        <FirstName>John</FirstName>
-        <LastName>Smith</LastName>
-        <Picture>imgs/002.jpg</Picture>
-    </Record>
-</Data>
-```
-
-### Example 1
-Output _FirstName<SPACE>LastName_ of the first record
-
-```
-${=Record[1]/FirstName} ${=Record[1]/LastName}
-```
-
-### Example 2
-Output _FirstName<SPACE>LastName_ of all records
-
-```
-${*Record}${=FirstName} ${=LastName}${.}
-```
-
-### Example 3
-Output _FirstName<SPACE>LastName_ of all records. Suffix with _(SA)_ if user has SpecialAccess or _(NA)_ if user does not have special access.
-
-```
-${*Record}${=FirstName} ${=LastName} ${?SpecialAccess=1}(SA)${:}(NA)${.}${.}
-```
-
-### Example 4
-Output _FirstName<SPACE>LastName_ of all records but declare the outputting part as a reusable Component.
-
-```
-${*Record}${@Comp1}${.}
-${#Comp1}${=FirstName} ${=LastName}${.}
-```
-
-### Example 5
-
-Output the picture of the first record to a picture fame named _ProfilePic_
-
-```
-${=Record[1]/Picture,ProfilePic}
-```
-
-## Release Notes
-
-### 1.3.2
-- Fix for data file paths containing a single quote
-- Fix clearing of previous result for Load into XML Structure
-- Fail instead of ignore if file for SCRIPT not found
-
-### 1.3.1
-- Fix issue with incorrectly reported multiple ROWREPEAT statements for a row
-
-### 1.3.0
-- New ROWREPEAT statement `${-...}`
-- Append instead of replace on OUTPUT to frame
-- Fix issue with LOOP in script label
-- Correct auto-closing behavior of block statements in (nested) tables
-- Simplify comparison syntax on IF statements
-
-### 1.2.1
-- InDesign 2024 support
-
-### 1.2.0
-- Major internal rewrite, resulting in much better/expected results and error handling
-- Validate target names before actual processing
-- Better handling of decimals in XLSX input
-
-### 1.1.1
-- Minor internal improvements
-
-### 1.1.0
-- CC 2023 support
-- Apple Silicon (M1/M2) support
-- Import data source into InDesign XML Structure
-- Bugfixes
-
-### v1.0.2
-- CC 2022 support
-    
-### v1.0.1
-- CC 2021 support
-    
-### v1.0.0
-- First release
-
----
-Copyright &copy; 2016-2023 [Rxcle](https://www.rxcle.com)
+- Issues, questions and suggestions via [GitHub Issues](https://github.com/rxcle/rxindi/issues)
