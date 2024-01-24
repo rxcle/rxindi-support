@@ -10,6 +10,9 @@ Rxindi is an [Adobe InDesign Extension](https://exchange.adobe.com/apps/cc/10368
 
 Rxindi is simple to use, very lightweight and portable. The statements used for the processing instructions are all plain text and stored within you regular InDesign documents. No special plugins are needed to write them or to open/edit documents that contain them.
 
+- [Full user manual](help.md) (also included with Rxindi)
+- [Release notes](releasenotes.md) for the latest version
+
 ## Capabilities
 - Use XML, CSV, JSON or XLSX as input data
 - OUTPUT arbitrary content from the selected data file (using XPath) to:
@@ -40,7 +43,6 @@ ${?HasFirstName}${=FirstName}${:}  ${=' ';   .;   =LastName}
 In this example, _HasFirstName_, _FirstName_ and _LastName_ are XPath queries (the path to an element) for the data source document that is to be used
 
 ## More info
-- Read the [full user manual](help.md), which is also included with Rxindi
-- Watch video's on the [Rxcle YouTube Channel](https://www.youtube.com/channel/UCiSFFEuOoIQdk6mivM3eGkQ)
+- Tutorial videos on the [Rxcle YouTube Channel](https://www.youtube.com/channel/UCiSFFEuOoIQdk6mivM3eGkQ)
 - Homepage on [Rxcle website](https://rxcle.com/rxindi)
 - Issues, questions and suggestions via [GitHub Issues](https://github.com/rxcle/rxindi/issues)
