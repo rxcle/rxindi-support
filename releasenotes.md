@@ -2,6 +2,11 @@
 
 ## This release
 
+**Version 1.4.1**
+
+- Correctly apply `tcstyle` and `tcrstyle` ACTION in ROWREPEAT
+- Corrections in manual
+
 **Version 1.4.0**
 
 - Table styling actions | [details](#table-styling-actions)
@@ -29,7 +34,7 @@
 The ACTION statement now has four new types for changing the styling of a table dynamically: `tstyle` (Table Style), `tcstyle` (Table Cell Style), `tcrstyle` (Table Cell Row Style) and `tccstyle` (Table Cell Column Style). All these must be specified in a cell in the part of the table you want to change the styling of. As with other ACTIONs, you'd typically embed these in an `IF` to get conditional styling.
 
 ### Improved mapping
-The ability to use data files of type JSON, CSV or XLSX (besides the native XML input format) has been in Rxindi for a long time already, but unfortunately the number of systems on which this worked correctly had been low. Additionally, even if it _did_ work, the mapping projection used for these file types had some usability concerns. With this release all this has been addressed. The JSON, CSV and XLSX mapping has been rewritten from the ground up, which should result in a much better experience this time around. Also, the default mapping has been changed, making it much more capable and usable. In addition Rxindi now offers more choice when it comes to how data is mapped. Besides the new Default mapping mode, you can switch back to the Classic mapping from v1.3 and with the "Raw" mapping mode Rxindi can now even process CSVs and XLSX without headers. The mapping mode can be switched using a new option in the Rxindi panel menu.
+The ability to use data files of type JSON, CSV or XLSX (besides the native XML input format) has been in Rxindi for a long time already, but unfortunately the number of systems on which this worked correctly had been low. Additionally, even if it _did_ work, the mapping projection used for these file types had some usability concerns. With this release all this has been addressed. The JSON, CSV and XLSX mapping has been rewritten from the ground up, which should result in a much better experience this time around. Also, the default mapping has been changed, making it much more capable and usable. In addition, Rxindi now offers more choice when it comes to how data is mapped. Besides the new Default mapping mode, you can switch back to the Classic mapping from v1.3 and with the "Raw" mapping mode Rxindi can now even process CSVs and XLSX without headers. The mapping mode can be switched using a new option in the Rxindi panel menu.
 
 > Note that the new default mapping mode is a **breaking change** please consult the Migration guide.
 
@@ -50,11 +55,11 @@ Take the following example:
 </data>
 ```
 
-If you want to loop over all `product` elements then in previous versions you'd write a path to `productlist`, e.g. `/data/productlist`. Starting from this version you'd write something like `/data/productlist/product` (or `/data/productlist/*` or even `//product` will work too in this particular example). This new behavior ensures that custom XPath filters and paths that resolve to either a single or to multiple elements (or attributes) now always give correct and consistent results.
+If you want to loop over all `product` elements then in previous versions, you'd write a path to `productlist`, e.g. `/data/productlist`. Starting from this version you'd write something like `/data/productlist/product` (or `/data/productlist/*` or even `//product` will work too in this particular example). This new behavior ensures that custom XPath filters and paths that resolve to either a single or to multiple elements (or attributes) now always give correct and consistent results.
 
-Looping a set number of times based on a number from data now requires the actual result type from the path to be explicitly of type number, boolean or string. In previous versions you could point it to any element or attribute and Rxindi tried to interpret the contents automatically. This logic could lead to unintended results in certain cases, which is why it now has been removed. Instead you explicitly state the desired behavior in the path. 
+Looping a set number of times based on a number from data now requires the actual result type from the path to be explicitly of type number, boolean or string. In previous versions you could point it to any element or attribute and Rxindi tried to interpret the contents automatically. This logic could lead to unintended results in certain cases, which is why it now has been removed. Instead, you explicitly state the desired behavior in the path. 
 
-Given the earlier example, if you want to look the amount of times (5) specified in the `stock` element, then the correct way to do this is: `number(/data/stock)`. Specifying the path just as `/data/stock` will loop just once, as it will loop over the `stock` element instead (of which there is one).
+Given the earlier example, if you want to loop the number of times (5) specified in the `stock` element, then the correct way to do this is: `number(/data/stock)`. Specifying the path just as `/data/stock` will loop just once, as it will loop over the `stock` element instead (of which there is one).
 
 ### Removed support for Frame Statements
 Support for Rxindi statements in Script Labels of frames has been removed in this version. This decision has been made to allow Rxindi to focus on a single, uniform way and place for statements going forward. 
@@ -66,7 +71,7 @@ Frame Statements had some fundamental flaws both from a conceptual and implement
 What this means in practice (if you were using them in templates): Frame names starting with a `$` are no longer treated in any special way and any Rxindi statements in their Script Label are ignored. 
 
 ### Improved and extended QR Code support for OUTPUT
-The QR Code support for OUTPUT has been reworked to make it more stable. Additionally _all_ QR Code Types available in InDesign (include those taking multiple input fields, like Email) are now supported. The manual has a dedicated section which much more detail on how to update QR Codes using Rxindi.
+The QR Code support for OUTPUT has been reworked to make it more stable. Additionally, _all_ QR Code Types available in InDesign (including those taking multiple input fields, like Email) are now supported. The manual has a dedicated section which has much more detail on how to update QR Codes using Rxindi.
 
 ### Support grouped styles for ACTION
 The style changing ACTION types (e.g. `pstyle`, `cstyle`, ...) refer to a style name in InDesign. In previous versions Rxindi did not support styles defined in a Style Group in InDesign. With this version you can now refer to styles in groups by simply specifying the full path to the style using a forward slash `/` as separator between group name(s) and the actual style name. For example: `${!pstyle:StyleGroupA/StyleGroupB/MyStyle}`.
@@ -95,7 +100,7 @@ Starting from this version Rxindi has a couple of options that can be configured
 **Version 1.2.1** | _2023-10-17_
 - InDesign 2024 support
 
-**Version 1.2.0** | (2023-05-31)
+**Version 1.2.0** | _2023-05-31_
 - Major internal rewrite, resulting in much better/expected results and error handling
 - Validate target names before actual processing
 - Better handling of decimals in XLSX input

@@ -8,13 +8,13 @@ A unique aspect of Rxindi is that template documents can be created without any 
 
 Rxindi imposes very little requirements on the actual layout of the input files. As long as your data is in one of the supported file types, you should be able to use it as-is.
 
-There is a lot of flexibility and functionality for outputting not only text but also images and QR codes. Additionally you can perform conditional and repeating actions, change styles and much more, and this all based on variable external data.
+There is a lot of flexibility and functionality for outputting not only text but also images and QR codes. Additionally, you can perform conditional and repeating actions, change styles and much more, and all this based on variable external data.
 
 ## Data Source
 
-The external data that is to be used to generate documents in Rxindi is called the _Data Source_. Templates are written with a specific data source structure in mind, because inside the template you need to refer to the exact data that you want to use. You reference this data by writing _paths_. To tell Rxindi what to do with this data at this path you write Rxindi _statements_, which a types of instructions. For example, one of the statements is `OUTPUT`. You provide to this statement a path to data in the Data Source to let Rxindi know _what_ to output. When the template is complete, you select the actual data source that you want to use as variable input to generate a document with and then _Process_ with the Rxindi plugin. You can repeat this process any number of times using the same template document but different data.
+The external data that is to be used to generate documents in Rxindi is called the _Data Source_. Templates are written with a specific data source structure in mind, because inside the template you need to refer to the exact data that you want to use. You reference this data by writing _paths_. To tell Rxindi what to do with this data at this path you write Rxindi _statements_, which are types of instructions. For example, one of the statements is `OUTPUT`. You provide to this statement a path to data in the Data Source to let Rxindi know _what_ to output. When the template is complete, you select the actual data source that you want to use as variable input to generate a document with and then _Process_ with the Rxindi plugin. You can repeat this process any number of times using the same template document but different data.
 
-Rxindi is not aware and does not care about the contents or structure of the Data Source as long as it is of a supported file type and the paths in your template match with the structure of the file. These paths are written using the universal standard _XPath_. Internally all data in Rxindi is treated as XML. If the data source is of a different type then it gets automatically and transparently converted to XML using a transparent mapping convention. See the [Data Source Reference](#data-source-reference) for more information.
+Rxindi is not aware and does not care about the contents or structure of the Data Source as long as it is of a supported file type and the paths in your template match with the structure of the file. These paths are written using the universal standard _XPath_. Internally all data in Rxindi is treated as XML. If the data source is of a different type, then it gets automatically and transparently converted to XML using a transparent mapping convention. See the [Data Source Reference](#data-source-reference) for more information.
 
 ## Statements
 
@@ -61,7 +61,7 @@ Note that the `Root` element from the Data Source is not specified in the path h
 ${=/Root/Person/FirstName}
 ```
 
-All Data Sources are interpreted as as XML on processing and all data paths in Rxindi follow the universal XPath (1.0) convention, including built-in XPath functions and conversions like `count()` and `number()`.
+All Data Sources are interpreted as XML on processing and all data paths in Rxindi follow the universal XPath (1.0) convention, including built-in XPath functions and conversions like `count()` and `number()`.
 
 ### Components
 
@@ -69,7 +69,7 @@ The person details output example from the previous chapter can be made into a m
 
 Components are defined in a Text Frame. It is recommended (but not necessary) to define components in a different Text Frame than where instances of it are to be placed. The Component definition Text Frame can be located anywhere, including unused Master Spreads, non-printing layers or off-page. A Text Frame can contain multiple Component definitions. For our example we'll define just one Component and name it `PersonDetails`. 
 
-To define a Component you start with the `${#PersonDetails}` statement, then write the Component contents and end with the `${.}` statement. The full definition of the example Component is as follows: 
+To define a Component, you start with the `${#PersonDetails}` statement, then write the Component contents and end with the `${.}` statement. The full definition of the example Component is as follows: 
 
 ```
 ${#PersonDetails}${=FirstName} ${=LastName} lives at ${=Address}{$.}
@@ -87,7 +87,7 @@ Symbols like `=`, `#` and `@` specify the _Statement Type_ and should always be 
 
 Components typically expect certain data, which is the context on which data paths inside the Component are relative to. In our example we have a data path to `FirstName`, so we will need a context that provides an element with that name.
 
-If we only reference the Component and specify nothing else, then that Component will get the same data context as what is used at the location where we are referencing the component. In this case that is the default context, which is `/Root`. In this particular case we want to provide the Component with `/Root/Person` as context instead. If we do this we can directly use the path to `FirstName` element inside the Component. This makes the Component independent from a particular parent element.
+If we only reference the Component and specify nothing else, then that Component will get the same data context as what is used at the location where we are referencing the component. In this case that is the default context, which is `/Root`. In this particular case we want to provide the Component with `/Root/Person` as context instead. If we do this, we can directly use the path to `FirstName` element inside the Component. This makes the Component independent from a particular parent element.
 
 In order to provide a context when placing the Component, a comma is placed directly after the Component name, followed by the path to the data that should be used as context for the Component. In this case we want to provide `Person` (relative to `/Root`) as a context.
 
@@ -123,13 +123,13 @@ ${@PersonDetails,Person[1]}
 ${@PersonDetails,Person[2]}
 ```
 
-In case you do _not_ provide a specific index for `Person` here, but keep the statement with path simply as `${@PersonDetails,Person}`, the path on the data source would match 2 elements here. These would both be passed to a the Component instance. Inside the Component we match any `FirstName` which will also match 2 elements (one for each Person). In other words the result would be `JohnJane SmithDoe lives at Baker Street 221AMain Street 101`. In this case this is not what you'd want.
+In case you do _not_ provide a specific index for `Person` here but keep the statement with path simply as `${@PersonDetails,Person}`, the path on the data source would match 2 elements here. These would both be passed to the Component instance. Inside the Component we match any `FirstName` which will also match 2 elements (one for each Person). In other words, the result would be `JohnJane SmithDoe lives at Baker Street 221AMain Street 101`. In this case this is not what you'd want.
 
 ### Conditionals
 
-By default all statements in Rxindi are executed unconditionally, regardless if the specified path returns no matching data. Often you'd only want to include certain data or perform actions in a document based on some condition though. This condition can be that data must be present or that a certain element in the data has a particular value.
+By default, all statements in Rxindi are executed unconditionally, regardless if the specified path returns no matching data. Often, you'd only want to include certain data or perform actions in a document based on some condition though. This condition can be that data must be present or that a certain element in the data has a particular value.
 
-Given our Person example, say that a Person may have a title, and there is an other element that specifies whether that title should be output. We could use the following conditional statement set for this:
+Given our Person example, say that a Person may have a title, and there is another element that specifies whether that title should be output. We could use the following conditional statement set for this:
 
 ```
 ${?HasTitle=1}${=Title} ${.}${=LastName}
@@ -150,7 +150,7 @@ The following example shows a statement that outputs either the Title _or_ First
 ${?HasTitle=1}${=Title} ${:}${=FirstName} ${.}${=LastName}
 ```
 
-This statement set is similar to the previous one, only the new statements will be explained.
+This statement-set is similar to the previous one, only the new statements will be explained.
 
 | Part            | Statement | Description |
 |-----------------|-----------|-------------|
@@ -158,7 +158,7 @@ This statement set is similar to the previous one, only the new statements will 
 | `${=FirstName}` | `OUTPUT`  | Output the value of `FirstName`. Because it follows an `ELSE` statement, it will only be processed if the initial `IF` evaluated to _false_.
 
 
-The example can be also be written using an alternative syntax as follows:
+The example can also be written using an alternative syntax as follows:
 
 ```
 ${?HasTitle=1;=Title;:;=FirstName;.;=string(' ');=LastName}
@@ -179,7 +179,7 @@ The user interface of Rxindi consists of a single InDesign panel which can be op
 - `Process`
     - Here you can (optionally) select a data source file (XML, JSON, CSV, XLSX)
     - The `Process Document` starts the actual processing.
-        - In order to process a document it must have been _saved_ and _unmodified_
+        - In order to process a document, it must have been _saved_ and _unmodified_
     - In case `Compatibility Mode` is enabled, this is shown here with a text label
       - Toggle this on/off via the Rxindi panel menu under `Options` `>` `Compatibility`
 - `Result`
@@ -206,14 +206,14 @@ The panel menu contains the following items:
 ### Compatibility Mode
 In order to add certain new features and improve the general behavior of Rxindi, some versions unfortunately have breaking changes in behavior compared to a previous one. This for example the case when upgrading to v1.4 from a previous version.
 
-Unfortunately this _can_ mean that template documents made for an earlier version of Rxindi no longer behave as expected in the latest version, depending on the features of Rxindi used.
+Unfortunately, this _can_ mean that template documents made for an earlier version of Rxindi no longer behave as expected in the latest version, depending on the features of Rxindi used.
 
 Using the `Options` `>` `Compatibility` settings in the Rxindi panel menu you can explicitly switch the processing behavior back to a previous version to allow you to process these older template documents as-is. When set to anything else but `Latest`, the main Rxindi interface will also show the text `Compatibility Mode` to indicate that processing behavior will deviate from what it would be with the latest version.
 
 The Rxindi manual only explains the functionality and behavior for the _latest_ version, which may not match with the behavior you see in Compatibility Mode. Also be aware that Compatibility Mode attempts to emulate the old behavior as closely as possible, meaning that newer features and processing improvements may not be available in this mode. 
 
 ### Mapping Mode
-The mapping mode determines how data files from a format other than XML are converted. This impacts the paths you write in order to get data from the data files. If Legacy Compatibility Mode is enabled then the Mapping mode cannot be changed (it will always be "Classic"). The difference between "Default" and "Raw" mainly determines how property names and column headers map to element names. See the [Data Source Reference](#data-source-reference) section for details on each mode.
+The mapping mode determines how data files from a format other than XML are converted. This impacts the paths you write in order to get data from the data files. If Legacy Compatibility Mode is enabled,  then the Mapping mode cannot be changed (it will always be "Classic"). The difference between "Default" and "Raw" mainly determines how property names and column headers map to element names. See the [Data Source Reference](#data-source-reference) section for details on each mode.
 
 ---
 # Statement Details 
@@ -225,7 +225,7 @@ In order to identify Rxindi statements in inline text, and to distinguish them f
 > Placeholders only exist as a _container_ for Rxindi Statements, they perform no logic in itself. For instance `${}` is a valid placeholder which does nothing and `${blabla}` is a valid placeholder which contains an _invalid_ statement.
 
 ## Statements
-Statements specify the actual processing action for Rxindi to perform. All statements start with a single symbol that indicates the statement type. This must be the first non whitespace character following either a placeholder opening `${` or multi-statement separator `;` (more on this later)
+Statements specify the actual processing action for Rxindi to perform. All statements start with a single symbol that indicates the statement type. This must be the first non-whitespace character following either a placeholder opening `${` or multi-statement separator `;` (more on this later)
 
 Many statements also expect one or more arguments. The main argument directly follows the statement symbol. Additional arguments follow the main argument, separated by a comma. Note that the expected arguments and their meaning varies per statement type.
 
@@ -246,7 +246,7 @@ ${@PersonDetails,Person[1]}
 
 
 ## Blocks
-Certain statements implicitly start a logical scope _Block_ in which all consecutive statements are processed until the Block is closed. Blocks are closed either implicitly or explicitly. For example the `IF` statement (`${?...}`) will start a block. This means that everything following the `IF` statement is placed in a block and only gets processed if the `IF` is _true_. The block is either explicitly closed using an `END` statement (`.`) or implicitly by using an `ELSE` statement; Which will actually start a _new_ implicit block for the `ELSE`. Additionally the end of an InDesign story or a Table cell also implicitly closes all open blocks. 
+Certain statements implicitly start a logical scope _Block_ in which all consecutive statements are processed until the Block is closed. Blocks are closed either implicitly or explicitly. For example the `IF` statement (`${?...}`) will start a block. This means that everything following the `IF` statement is placed in a block and only gets processed if the `IF` is _true_. The block is either explicitly closed using an `END` statement (`.`) or implicitly by using an `ELSE` statement; Which will actually start a _new_ implicit block for the `ELSE`. Additionally, the end of an InDesign story or a Table cell also implicitly closes all open blocks. 
 
 The statement types that have block behavior are: `IF`, `ELSE`, `LOOP` and `COMPONENT`.
 
@@ -301,15 +301,15 @@ ${=/Root/Person/FirstName}
 ${=/Root/Person/Picture,personPicture}
 ```
 
-If only a path is provided then the content is output at the start point of the current placeholder the statement is part of. The optional `<target>` specifies the name of a frame. Frames in InDesign can be given a name in the _Layers_ panel.
+If only a path is provided, then the content is output at the start point of the current placeholder the statement is part of. The optional `<target>` specifies the name of a frame. Frames in InDesign can be given a name in the _Layers_ panel.
 
-The `OUTPUT` statement behaves differently depending on the type of the frame targeted.
+The `OUTPUT` statement behaves differently depending on the type of frame targeted.
 
 | Type    | Behavior                                                                                                                       |
 |---------|--------------------------------------------------------------------------------------------------------------------------------|
 | Text    | Output content is appended to the existing content.                                                                            |
 | Image   | Output content is interpreted as a path to a valid image file, which is placed in the image frame (replacing an existing one). |
-| QR Code | Output content is used as as new values for the QR Code.                                                                       |
+| QR Code | Output content is used as new values for the QR Code.                                                                       |
 
 Note that the target frame must already have the desired type in the template document. Rxindi will never change the type of a frame on output.
 
@@ -325,7 +325,7 @@ All image types supported by InDesign can be used.
 ### QR Codes
 To create a QR Code with the `OUTPUT` statement, first generate a QR Code of the desired type and with the desired size and swatch within the InDesign template document. The initial values in the template document can be either dummy values or the default/standard values you want to use. Next, give the frame that contains the QR Code a unique name and target it using the `OUTPUT` statement. The QR Code will then be updated with the value that results from the path for `OUTPUT`.
 
-Some of the QR Code types in InDesign have multiple fields that can be set. To target specific specific field, use the following syntax in the `OUTPUT` path: `<field1>:<value>|<field2>:<value>|...` to combine this with data from the data file you can use the XPath `concat(...)` function. All fields are optional, if a field is not set its existing/default value is retained. Note that field names are case-insensitive, but specified here in all-lowercase.
+Some of the QR Code types in InDesign have multiple fields that can be set. To target a specific field, use the following syntax in the `OUTPUT` path: `<field1>:<value>|<field2>:<value>|...` to combine this with data from the data file you can use the XPath `concat(...)` function. All fields are optional, if a field is not set its existing/default value is retained. Note that field names are case-insensitive but specified here in all-lowercase.
 
 Overview of the supported types with their fields:
 - Plain Text
@@ -435,7 +435,7 @@ The type of the return type of the specified path specifies what the exact behav
 | Single Element, Attribute or Text node     | Loop once on the exact node returned (not its children!)                                      | Yes (the node) |
 | List of Elements, Attributes or Text nodes | Loop over all the nodes in the list                                                           | Yes (per node) |
 
-As of Rxindi v1.4 these types have to be exact, meaning that a "number-like" value in a string is not automatically treated as an actual number. If you want to loop a certain amount of times based on a value from XML data, you might need to explicitly cast this to a number: `number(@someAttribute)`. Often loop is used to iterate over Elements, Attribute and Text nodes - the types for these are implicit.
+As of Rxindi v1.4 these types must be exact, meaning that a "number-like" value in a string is not automatically treated as an actual number. If you want to loop a certain number of times based on a value from XML data, you might need to explicitly cast this to a number: `number(@someAttribute)`. Often loop is used to iterate over Elements, Attribute and Text nodes - the types for these are implicit.
 
 > Note that in XPath a `Text` node is not the same as a `string`. A Text node _contains_ a string though. You can select and iterate over Text nodes. You cannot iterate over strings. A string (like number and boolean) is always a single value.
 
@@ -489,7 +489,7 @@ The `ELSE` statement ends the _Block_ started with `IF` or `LOOP` and starts a n
 
 When paired with an `IF`, `ELSE` always uses the inverse condition of whatever is the result of the preceding `IF`. If you want a sub condition, simply use a new `IF` as the first child statement of the `ELSE`.
 
-Using an `ELSE` without a matching preceding `IF` or `LOOP` in the same parent Block will given an error.
+Using an `ELSE` without a matching preceding `IF` or `LOOP` in the same parent Block will give an error.
 
 ## COMPONENT (`#`)
 Defines a named Component, which is a collection of reusable statements and content that is to be instantiated one or multiple times.
@@ -507,7 +507,7 @@ ${#CompB}${=FirstName}${.}
 
 The `COMPONENT` statement starts an implicit _block_ containing the content and statements directly following the Component statement. As will other _block_ types, the end of the definition is indicated explicitly using `END` (`.`) or implicitly by the end of the current Story or end of the multi-statement Placeholder.
 
-Component definitions in of itself do nothing. You must explicitly reference a component in order for it to be instantiated and processed. Components can be instantiated using `PLACE` (`@`) by providing their name and optionally data context.
+Component definitions by themselves do nothing. You must explicitly reference a component in order for it to be instantiated and processed. Components can be instantiated using `PLACE` (`@`) by providing their name and optionally data context.
 
 Because Component definitions are not part of the normal document content you can define them off-page, e.g. in a text frame on the pasteboard or on an otherwise unused master page. This is however not a strict requirement you can define Components in the same Story as where you reference them if you like. 
 
@@ -515,7 +515,7 @@ Component definitions always must be the top-_level_ statement in a Story. This 
 
 The actual order of Component definitions in the document structure does not matter; You can reference a Component which is defined much later in the document.
 
-Components must have a unique name which is case sensitive. Standard statement escape rules apply to Component names as well. For instance it you want a Component name to literally contain `;` you must write it as `\;`.
+Components must have a unique name which is case sensitive. Standard statement escape rules apply to Component names as well. For instance, if you want a Component name to literally contain `;` you must write it as `\;`.
 
 After a document has been successfully processed, the Component definitions will be _removed_ from the document.
 
@@ -537,9 +537,9 @@ ${@PersonDetails,/Root/Person/FirstName}
 
 Components are defined and named using the `COMPONENT` (`#`) statement. Components may be defined after they are placed in the document structure. Referencing an unknown Component will give an error.
 
-By default Components get the same data context as the current context at the location of the `PLACE` statement. To provide a different context for the Component use a `,` directly after the Component name and supply an XPath expression.
+By default, Components get the same data context as the current context at the location of the `PLACE` statement. To provide a different context for the Component use a `,` directly after the Component name and supply an XPath expression.
 
-Not that the data context does _not_ control whether or not the Component is placed. Even if the data context resolves to no data, the Component is still placed; The Component itself may have logic to deal with this occurrence (e.g. it may output "No data available"). If you want to prevent a Component from being placed if there is no data then precede it with an `IF` statement.
+Not that the data context does _not_ control whether the Component is placed. Even if the data context resolves to no data, the Component is still placed; The Component itself may have logic to deal with this occurrence (e.g. it may output "No data available"). If you want to prevent a Component from being placed if there is no data, then precede it with an `IF` statement.
 
 ## END (`.`)
 Ends the current (innermost) _block_ that was started either via `IF`, `ELSE`, `LOOP` or `COMPONENT`. 
@@ -555,7 +555,7 @@ ${.}
 ${?IsTrue}${FirstName}${.}
 ```
 
-This statement expects no arguments. If there is no block to close at the position of this statement then an error is given.
+This statement expects no arguments. If there is no block to close at the position of this statement, then an error is given.
 
 `END` statements are not strictly required at the very end of a multi-statement placeholder because all blocks opened in the same multi-statement placeholder are automatically closed. The same is true for any block still open at the end of a text frame or table cell, these too are automatically closed.
 
@@ -574,9 +574,9 @@ ${&RotateFrame,myFrame}
 ${&PlacePicture,pictureFrame,string('Alt text')}
 ```
 
-Scripts must be in the CC ExtendScript format and use (only) statements that are compatible with the version of InDesign being used to process the document. The script must have either the `.js` or `.jsx` extension and be located in the same directory as the InDesign template document being processed, or in a `scripts` subfolder below the document being processed. Global scripts are _not_ considered. When referencing the script, the extension must be omitted and the casing must match that of the script filename exactly.
+Scripts must be in the CC ExtendScript format and use (only) statements that are compatible with the version of InDesign being used to process the document. The script must have either the `.js` or `.jsx` extension and be located in the same directory as the InDesign template document being processed, or in a `scripts` subfolder below the document being processed. Global scripts are _not_ considered. When referencing the script, the extension must be omitted, and the casing must match that of the script filename exactly.
 
-From within the script, the global ExtendScript variables `app` and `document` are not available. Instead the `scriptArgs` object contains properties that are relevant to the context in which the scripts executes.
+From within the script, the global ExtendScript variables `app` and `document` are not available. Instead, the `scriptArgs` object contains properties that are relevant to the context in which the scripts executes.
 
 | Property   | Type                        | Description |
 |------------|-----------------------------|-------------|
@@ -590,7 +590,7 @@ To halt further execution of processing from within a script, either return the 
 
 Arguments three and beyond for the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `params` array property on the `scriptArgs` to the script, where the result of the third argument for `SCRIPT` is the first (zeroth index) value on `scriptArgs.params`. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify parameter arguments without specifying a different target, just use an empty target argument: `<script>,,<args>`.
 
-**IMPORTANT** Scripts give complete freedom on actions that can be performed within an InDesign document. This provides a lot of freedom and flexibility. However this also means that Rxindi cannot track the changes made by a script to a document. Certain changes like removal of items or changes to _Notes_ (which are used by Rxindi during processing) may cause statements following a script to fail.
+**IMPORTANT** Scripts give complete freedom on actions that can be performed within an InDesign document. This provides a lot of freedom and flexibility. However, this also means that Rxindi cannot track the changes made by a script to a document. Certain changes like removal of items or changes to _Notes_ (which are used by Rxindi during processing) may cause statements following a script to fail.
 
 ## ACTION (`!`)
 Executes a special action. The first (and required) argument specifies the action type to execute.
@@ -614,7 +614,7 @@ Below is a list of all available actions. Note that some actions take an additio
 |-------------------|------------------------------------------------------------------------------------------------------|-------------|
 | `hide`            | Hides the target or current frame.                                                                   | Optional    |
 | `show`            | Shows the target or current frame if hidden.                                                         | Optional    |
-| `state:<name>`    | Apply the State with the specified name to the target frame, which must be a a multi-state object.   | Required    |
+| `state:<name>`    | Apply the State with the specified name to the target frame, which must be a multi-state object.     | Required    |
 | `ostyle:<name>`   | Apply the Object Style with the specified name to the target or current frame.                       | Optional    |
 | `cstyle:<name>`   | Apply the Character Style with the specified name to the following content or to the target frame.   | Optional    |
 | `pstyle:<name>`   | Apply the Paragraph Style with the specified name to the current paragraph or to the target frame.   | Optional    |
@@ -626,11 +626,11 @@ Below is a list of all available actions. Note that some actions take an additio
 Note that an `ACTION` by itself is always executed, it has no condition of its own. In order to make it conditional (or run multiple times) place it after an `IF` or `LOOP` statement.
 
 ### Styling actions
-The styling type actions all take an action type argument, which is the (exact) name of the style you want to apply to the respective item. The referenced style name must exist in the template document. If no style name is given then the current style is _removed_ from the target item and the document default style is applied instead.
+The styling type actions all take an action type argument, which is the (exact) name of the style you want to apply to the respective item. The referenced style name must exist in the template document. If no style name is given, then the current style is _removed_ from the target item and the document default style is applied instead.
 
 For the object style action `ostyle` either the Object Style of the target frame is changed, or the Object Style of the current frame.
 
-The text style actions `cstyle` and `pstyle` can either target a particular frame, which will change the Character/Paragraph Style of that frame. If no target is given then the style of the paragraph that the statement is in is changed for `pstyle`. For `cstyle` the current character style for new content _following it_ (e.g. via `OUTPUT`) is changed, existing text is not changed.
+The text style actions `cstyle` and `pstyle` can either target a particular frame, which will change the Character/Paragraph Style of that frame. If no target is given, then the style of the paragraph that the statement is in is changed for `pstyle`. For `cstyle` the current character style for new content _following it_ (e.g. via `OUTPUT`) is changed, existing text is not changed.
 
 For the table style actions `tstyle`, `tcstyle`, `tcrstyle` and `tccstyle`, the statement itself must be placed in the cell that is in the (part of) the table of which the style is to be changed. The target argument for `ACTION` cannot be used with these action types. All table style change actions can freely be mixed within the same table.
 
@@ -643,10 +643,10 @@ For example: Given the following grouping structure:
 
 You would use the following statement to refer to it in a `pstyle` action: `${!pstyle:StyleGroupA/StyleGroupB/MyStyle}`
 
-If a group or a style name contains a literal `/` character then you must escape it using a backslash immediately before it. For example to refer to the style `This/That` use `This\/That` in the style action.  Escaping forward slashes is not necessary (but still allowed) for a style that is specified at top-level (non-grouped) in InDesign though.
+If a group or a style name contains a literal `/` character then you must escape it using a backslash immediately before it. For example, to refer to the style `This/That` use `This\/That` in the style action.  Escaping forward slashes is not necessary (but still allowed) for a style that is specified at top-level (non-grouped) in InDesign though.
 
 ## ROWREPEAT (`-`)
-Loop over a collection or numeric value obtained from the given expression and repeats table row for each value. 
+Loop over a collection or numeric value obtained from the given expression and repeats a table row for each value. 
 
 **Syntax**
 ```
@@ -672,11 +672,11 @@ Data Sources can be in the XML, JSON, CSV or XLSX (Excel) format. Non-XML data s
 
 If the input file is an XML file, then that file is used as-is. The rest of this chapter will explain how the other file types are converted.
 
-> In all examples in this chapters _absolute_ XPaths are used, starting at the root e.g. `/data/persons/...`. In practice the root can usually be omitted in paths in Rxindi as it is the default data context => `persons/...`
+> In all examples in this chapter _absolute_ XPaths are used, starting at the root e.g. `/data/persons/...`. In practice the root can usually be omitted in paths in Rxindi as it is the default data context => `persons/...`
 
 ## Mapping Modes
 
-Conversion from from JSON, CSV or XLSX to XML can be done in many different ways. For sake of consistency and compatibility Rxindi has settled on providing a limited set of options for the automatic conversion which is suited for the majority of common use cases. If you need a very specific solution that the automatic conversion cannot offer, you can convert the original data to XML outside of Rxindi using an external tool, website or service and use the resulting XML as data source for Rxindi instead.
+Conversion from JSON, CSV or XLSX to XML can be done in many different ways. For sake of consistency and compatibility Rxindi has settled on providing a limited set of options for the automatic conversion which is suited for the majority of common use cases. If you need a very specific solution that the automatic conversion cannot offer, you can convert the original data to XML outside of Rxindi using an external tool, website or service and use the resulting XML as data source for Rxindi instead.
 
 The conversion behavior is controlled by a "Mapping Mode". Rxindi currently offers three:
 - `Default`
@@ -695,7 +695,7 @@ Here is an overview on the modes and its effect on the file type:
 
 ### Column/Property name mapping for Default and Classic
 
-For modes `Default` and `Classic` a best attempt is made to map the Column (XSLX & CSV) and Property (JSON) names onto XML Element names. This is done so that paths for mapping in Rxindi templates become a bit easier to write. For some names Rxindi has to make some adjustments because the rules for what is allowed in an XML Element name are much more strict than what is allowed in Column & Property names. 
+For modes `Default` and `Classic` a best attempt is made to map the Column (XSLX & CSV) and Property (JSON) names onto XML Element names. This is done so that paths for mapping in Rxindi templates become a bit easier to write. For some names, Rxindi has to make some adjustments because the rules for what is allowed in an XML Element name are much stricter than what is allowed in Column & Property names. 
 
 - Characters in the column/property name that are not allowed in XML:
   - In `Default` mode: _removed_
@@ -740,7 +740,7 @@ Example source JSON:
 
 ### Default mode
 
-The `Default` mapping mode maps JSON such a way that ensures that all original information is retained and paths to the data can be written in multiple ways. A best effort is made to map JSON property names onto XML element names.
+The `Default` mapping mode maps JSON in such a way that ensures that all original information is retained and paths to the data can be written in multiple ways. A best effort is made to map JSON property names onto XML element names.
 
 - Every JSON property and array item becomes an XML element
 - The name of the JSON property becomes the name of the XML element 
@@ -795,7 +795,7 @@ Properties with an explicit value of `undefined` in the source JSON are _exclude
 The `Raw` mapping mode for JSON is very similar to `Default` mode, the only difference is that no attempt is made to map JSON property names to XML Element names - all element names simply become `p`.
 
 - Every JSON property and array item becomes an XML element
-- The name of every the JSON property becomes an XML element with name `p`
+- The name of every JSON property becomes an XML element with name `p`
 - Every property value becomes content of the XML element for the property
 - Every element is annotated with the JSON value type using the `type` attribute
 - The root XML element is a fixed element is always named `data` 
