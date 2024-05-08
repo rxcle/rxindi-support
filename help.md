@@ -1,4 +1,4 @@
-# Rxindi 1.4
+# Rxindi 1.5
 
 ## Introduction
 
@@ -18,7 +18,7 @@ Rxindi is not aware and does not care about the contents or structure of the Dat
 
 ## Statements
 
-Statements are instructions that tell Rxindi what to do. They are placed directly inside an InDesign Text Frame (or actually: Story). Rxindi supports many different statements, for example: `OUTPUT`, `IF`, `LOOP` and more. Every statement is associated with a single character, e.g. the `OUTPUT` statement is represented by the "equals" character: `=` .
+Statements are instructions that tell Rxindi what to do. They are placed directly inside an InDesign Text Frame (or actually: Story). Rxindi supports many statements, for example: `OUTPUT`, `IF`, `LOOP` and more. Every statement is associated with a single character, e.g. the `OUTPUT` statement is represented by the "equals" character: `=`.
 
 In order to separate Rxindi statements from regular content in an InDesign Text Frame, they are placed in a _Placeholder_. The Rxindi placeholder format is `${...}`, where `...` represents the actual instruction statement(s) that you want to perform.
 
@@ -178,6 +178,9 @@ The user interface of Rxindi consists of a single InDesign panel which can be op
         - Validation makes no changes to the document.
 - `Process`
     - Here you can (optionally) select a data source file (XML, JSON, CSV, XLSX)
+      - By default only the file name of the selected data source is shown, toggle the full path via `Panel Menu` `>` `Options` `>` `Display`
+    - Optionally you can also specify a custom processing parameter
+      - The input field for this is hidden by default, enable via `Panel Menu` `>` `Options` `>` `Display`
     - The `Process Document` starts the actual processing.
         - In order to process a document, it must have been _saved_ and _unmodified_
     - In case `Compatibility Mode` is enabled, this is shown here with a text label
@@ -200,6 +203,9 @@ The panel menu contains the following items:
   - `Logging` : Set the logging level
     - `Normal` : (Recommended) Regular logging of processing steps and errors
     - `Verbose` : Log very detailed information during processing, log files can become large - only enable when troubleshooting
+  - `Display` : Display options
+    - `Data Source Full Path` : Show the full path of the Data Source (enabled) or only the file name (disabled)
+    - `Parameter` : Show the processing Parameter input filed in the panel (enabled) or hide it (disabled)
   - `Reinitialize` : Reload Rxindi - Typically only needed in case of issues
 - `Logs` : Opens the directory that contains the log files
 
@@ -213,7 +219,7 @@ Using the `Options` `>` `Compatibility` settings in the Rxindi panel menu you ca
 The Rxindi manual only explains the functionality and behavior for the _latest_ version, which may not match with the behavior you see in Compatibility Mode. Also be aware that Compatibility Mode attempts to emulate the old behavior as closely as possible, meaning that newer features and processing improvements may not be available in this mode. 
 
 ### Mapping Mode
-The mapping mode determines how data files from a format other than XML are converted. This impacts the paths you write in order to get data from the data files. If Legacy Compatibility Mode is enabled,  then the Mapping mode cannot be changed (it will always be "Classic"). The difference between "Default" and "Raw" mainly determines how property names and column headers map to element names. See the [Data Source Reference](#data-source-reference) section for details on each mode.
+The mapping mode determines how data files from a format other than XML are converted. This impacts the paths you write in order to get data from the data files. If Legacy Compatibility Mode is enabled, then the Mapping mode cannot be changed (it will always be "Classic"). The difference between "Default" and "Raw" mainly determines how property names and column headers map to element names. See the [Data Source Reference](#data-source-reference) section for details on each mode.
 
 ---
 # Statement Details 
@@ -270,9 +276,29 @@ Some characters are reserved characters in all statement arguments within Rxindi
 
 To use them in an argument, you have to put a backslash immediately before it, so `\,`. An example of the XPath `concat` function using this convention: `${=concat('\,'\,'\;'\,'\}')}`. This will produce the output `,;}`
 
+## Processing Parameter
+
+The primary inputs for processing are:
+- An InDesign document, which for Rxindi is always the _current_ active document in InDesign
+- An optional path to a data source file to use
+- An optional processing parameter
+
+The latter is a custom string that can be set to any value. Its value is not interpreted by Rxindi, but scripts and statements may use this value in a way that makes sense to the template or data to be processed. 
+
+If it has a value then the parameter is mapped onto the root context as `@rxc-parameter`. This value may be used directly in output or as a filter for any other path. Do note that the value is always stored as a _string_, if you want to use it to for instance select a specific numeric index (like a row number in a spreadsheet) then you have to cast it to a number first.
+
+Examples:
+```
+${=/@rxc-parameter}
+${=/data/row[number(/@rxc-parameter)]/name}
+```
+
+Scripts receive the current value as the `parameter` property on the `script` object, and `init` trigger scripts may set or change the current value.
+
+The processing parameter can also be set and viewed from the Rxindi panel, but it is hidden by default. To show in, open the Rxindi Panel Menu and click on `Options` `>` `Display` `>` `Parameter`.
+
 ---
 # Statement Reference
-
 
 | Name        | S   | Arguments                                                 | Description |
 |-------------|-----|-----------------------------------------------------------|-------------|
@@ -311,21 +337,21 @@ The `OUTPUT` statement behaves differently depending on the type of frame target
 | Image   | Output content is interpreted as a path to a valid image file, which is placed in the image frame (replacing an existing one). |
 | QR Code | Output content is used as new values for the QR Code.                                                                       |
 
-Note that the target frame must already have the desired type in the template document. Rxindi will never change the type of a frame on output.
+Note that the target frame must already have the desired type in the template document. Rxindi will never change the type of frame on output.
 
 Any properties set on the frame in the template document are retained. This includes Object Style, Image Fitting and the used QR Code Swatch.
 
 ### Images
 When targeting an Image frame, it needs to be of Content Type "Graphic" in the InDesign template. This is the default when placing an image manually in InDesign and typically also when drawing a rectangle. InDesign indicates this with a diagonal cross in the frame. To change the content type in InDesign you can open the context menu on the frame and select `Content` `>` `Graphic`.
 
-The image reference in the data file needs to be either the full (absolute) path to a file or it can be a  path relative to the data source file being used. For instance, if the image files are in the same directory as the data file, then you just have to specify the file name.
+The image reference in the data file needs to be either the full (absolute) path to a file or it can be a path relative to the data source file being used. For instance, if the image files are in the same directory as the data file, then you just have to specify the file name.
 
 All image types supported by InDesign can be used.
 
 ### QR Codes
 To create a QR Code with the `OUTPUT` statement, first generate a QR Code of the desired type and with the desired size and swatch within the InDesign template document. The initial values in the template document can be either dummy values or the default/standard values you want to use. Next, give the frame that contains the QR Code a unique name and target it using the `OUTPUT` statement. The QR Code will then be updated with the value that results from the path for `OUTPUT`.
 
-Some of the QR Code types in InDesign have multiple fields that can be set. To target a specific field, use the following syntax in the `OUTPUT` path: `<field1>:<value>|<field2>:<value>|...` to combine this with data from the data file you can use the XPath `concat(...)` function. All fields are optional, if a field is not set its existing/default value is retained. Note that field names are case-insensitive but specified here in all-lowercase.
+Some QR Code types in InDesign have multiple fields that can be set. To target a specific field, use the following syntax in the `OUTPUT` path: `<field1>:<value>|<field2>:<value>|...` to combine this with data from the data file you can use the XPath `concat(...)` function. All fields are optional, if a field is not set its existing/default value is retained. Note that field names are case-insensitive but specified here in all-lowercase.
 
 Overview of the supported types with their fields:
 - Plain Text
@@ -388,8 +414,8 @@ ${?Value=5}All good${.}
 ```
 
 The following results from the expression are considered a _"false"_ value:
-  - Non existing element or attribute
-  - Element or attribute with no or all-whitespace content
+  - Non-existing element or attribute
+  - Element or attribute with no, or all-whitespace content
   - Element with no child elements
   - Value "0"
   - Value "NaN"
@@ -515,7 +541,7 @@ Component definitions always must be the top-_level_ statement in a Story. This 
 
 The actual order of Component definitions in the document structure does not matter; You can reference a Component which is defined much later in the document.
 
-Components must have a unique name which is case sensitive. Standard statement escape rules apply to Component names as well. For instance, if you want a Component name to literally contain `;` you must write it as `\;`.
+Components must have a unique name which is case-sensitive. Standard statement escape rules apply to Component names as well. For instance, if you want a Component name to literally contain `;` you must write it as `\;`.
 
 After a document has been successfully processed, the Component definitions will be _removed_ from the document.
 
@@ -564,7 +590,7 @@ Executes a custom external script.
 
 **Syntax**
 ```
-& <name> (,<target> (,<args>...))
+& <name> (:<trigger>) (,<target> (,<args>...))
 ```
 
 **Example**
@@ -572,25 +598,132 @@ Executes a custom external script.
 ${&AddPages}
 ${&RotateFrame,myFrame}
 ${&PlacePicture,pictureFrame,string('Alt text')}
+${&Export:end}
 ```
 
-Scripts must be in the CC ExtendScript format and use (only) statements that are compatible with the version of InDesign being used to process the document. The script must have either the `.js` or `.jsx` extension and be located in the same directory as the InDesign template document being processed, or in a `scripts` subfolder below the document being processed. Global scripts are _not_ considered. When referencing the script, the extension must be omitted, and the casing must match that of the script filename exactly.
+Scripts must be in the Adobe ExtendScript (js/jsx) or UXP Script (idjs) format and use (only) statements that are compatible with the version of InDesign being used to process the document. The script must have either the `.js`, `.jsx` or `.idjs` extension and be located in the same directory as the InDesign template document being processed, or in a `scripts` subfolder below the document being processed. Global scripts are _not_ considered. When referencing the script, the casing must match that of the script filename exactly. The file extension can be omitted, in which case a file with a supported extension is automatically looked up.
 
-From within the script, the global ExtendScript variables `app` and `document` are not available. Instead, the `scriptArgs` object contains properties that are relevant to the context in which the scripts executes.
+From within the script, the global ExtendScript variables `app` and `document` are not available. Instead, the global `script` variable has an object that contains properties relevant to the context in which the script executes:
 
-| Property   | Type                        | Description |
-|------------|-----------------------------|-------------|
-| `document` | `Document`                  | The InDesign Document currently being processed. Use `document.parent` to get the `Application` object
-| `name`     | `string`                    | Name of the current script
-| `context`  | `XML`                       | Current XML context
-| `target`   | `InsertionPoint` or `Frame` | Target for current script. For scripts called from within a Story, without an explicit target this will be an `InsertionPoint`. When called with a target frame name this will be a `TextFrame` or `SplineItem` (typically a `Rectangle`).
-| `params`   | `Array`                     | Array of additional parameter arguments passed to the script.
+| Property     | Type                        | Description |
+|--------------|-----------------------------|-------------|
+| `document`   | `Document`                  | The InDesign Document currently being processed. Use `document.parent` to get the `Application` object in ExtendScript.
+| `datasource` | `string`                    | File path to the data source. Can be an empty string.
+| `parameter`  | `string`                    | Global processing parameter. Can be an empty string.
+| `name`       | `string`                    | Name of the current script
+| `target`     | `InsertionPoint` or `Frame` | Target for current script. For scripts called from within a Story, without an explicit target this will be an `InsertionPoint`. When called with a target frame name this will be a `TextFrame` or `SplineItem` (typically a `Rectangle`).
+| `args`       | `Array`                     | Array of additional arguments passed to the script.
 
-To halt further execution of processing from within a script, either return the `boolean` value `false` or `throw` an `Error` object.
+You can report back errors or log custom messages to the Rxindi log using the return value of a script.
 
-Arguments three and beyond for the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `params` array property on the `scriptArgs` to the script, where the result of the third argument for `SCRIPT` is the first (zeroth index) value on `scriptArgs.params`. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify parameter arguments without specifying a different target, just use an empty target argument: `<script>,,<args>`.
+**Return successfully with a message to the Rxindi log**
+- Return either:
+  - A non-empty `string` 
+  - An array with the first element being a `boolean` value of `true` and the second a non-empty `string`
+- Examples:
+  - `return "This will be logged in the logfile";`
+  - `return [true, "This too will be logged"];`
+  
+**Stop processing with a fatal error**
+- Return either:
+  - The boolean value `false`
+  - An array with the first element being a `boolean` value of `false` and the second a non-empty `string`
+- Throw an `Error`
+- Examples:
+  - `return false;`
+  - `return [false, "Some custom error"];`
+  - `throw new Error("Some custom error");`
+
+Any other result value than what is listed here above will be ignored.
+
+Arguments three and beyond for the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `params` array property on the `script` object to the script, where the result of the third argument for `SCRIPT` is the first (zeroth index) value on `script.args`. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify parameter arguments without specifying a different target, just use an empty target argument: `<script>,,<args>`.
 
 **IMPORTANT** Scripts give complete freedom on actions that can be performed within an InDesign document. This provides a lot of freedom and flexibility. However, this also means that Rxindi cannot track the changes made by a script to a document. Certain changes like removal of items or changes to _Notes_ (which are used by Rxindi during processing) may cause statements following a script to fail.
+
+> Note: Rxindi 1.4 and earlier exposed the `scriptArgs` instead of `script` object to scripts. That object had a `context` property and `params` property (instead of `args`) which could contain XML nodes directly. While the `scriptArgs` object is still available for ExtendScript (js/jsx) scripts for backward compatibility it is now considered **deprecated** and will be removed in a future version. It is also _not_ available in UXP scripts. Please use only the `script` object for any new scripts and consider updating existing ones.
+
+### Triggers
+
+Scripts can be triggered automatically on certain key moments during the processing of a document. By default, scripts are executed "inline" in the order and context in which `SCRIPT` statements appear in a document. 
+
+To change the trigger behavior for a script, use a colon `:` character directly after the script name, followed by the name of the trigger on which to execute the script. For example, the statement `${&Export.js:end}` calls a script called "Export.js" on the `end` trigger, which is invoked when all other processing is done. The following triggers are available, and run in the indicated order:
+
+| Trigger            | Behavior |
+|--------------------|----------|
+| `init`             | Run script before any other processing has occurred, and _before_ the data source is loaded. Scripts executed with this trigger may optionally return a path to the (alternate) data source to use.
+| `start`            | Run script after the data source is loaded and preprocessing has completed, but _before_ any other regular statements.
+| `inline` (default) | Run script inline during normal processing flow.
+| `end`              | Run script after all other processing is successfully completed.
+
+Note that scripts triggered by anything other than `inline` do _not_ participate in regular flow logic. They are _always_ executed (once), regardless if they are declared e.g. inside an IF or LOOP statement. 
+
+#### Init trigger
+The `init` trigger can e.g. be used to select, generate or prepare a custom data source. The data source file to load by Rxindi should then be returned from a script with this trigger. The type of this file must always be of type XML and is used as-is.
+
+To return the path to a custom data source, prefix the string return value with `datasource:`
+```javascript
+return "datasource:/home/me/data.xml";
+```
+
+Similarly, to return a custom processing parameter, prefix the string return value with `parameter:`
+```javascript
+return "parameter:123";
+```
+
+You can also set both by separating them with a semicolon:
+```javascript
+return "datasource:/home/me/data.xml;parameter:123";
+```
+
+Any unprefixed string or anything following the first semicolon character is not interpreted as data source path (but still logged in the log file). Note that the `datasource:` and `parameter:` prefixes only has effect for the `init` trigger - it has no special meaning for other triggers.
+
+You cannot use "dynamic" data from the data source as input arguments on the `SCRIPT` statement for this trigger, because the data source has not been loaded yet. You can still use arguments, but these must always be of a "fixed" value like `string("Some value")`
+
+Additionally, for this trigger, the `target` property on the `script` object will always be `undefined`.
+    
+Other use cases for this trigger are early preparation in the document that is to be processed on disk e.g. for resources like images that are to be used. 
+
+Init Script Example:
+```javascript
+/* gendata.jsx 
+ * Generate a datasource and use it
+ * Invoke in the template document with an "init" trigger:
+ *   ${&gendata.jsx:init} ${=MyValue} 
+ */
+
+var file = new File("~/customdata.xml");
+try {
+    file.open("w");
+    file.write("<Custom><MyValue>Hello Rxindi</MyValue><Custom>");
+} finally {
+    file.close();
+}
+return "datasource:" + file.absoluteURI;
+```
+
+#### Start trigger
+The `start` trigger can be used to run script after the data source is loaded but before any other processing has occurred. You can use it to make e.g. global changes in your template document.
+
+Data from the data source can be used as input arguments and the `target` property on the `script` object will be set with this trigger, but only if the associated SCRIPT statement in the template specified a target page item.
+
+#### End trigger
+The `end` trigger can be used to run script at the very end, when all processing is completed. You typically would use this trigger to do some final cleanup of a document and/or on disk, and to save or export the processed document to disk.
+
+Note that this trigger only calls the script if processing was successfully completed (up to this point).
+
+End Script Example:
+```javascript
+/* export.jsx 
+ * Save the document and close it
+ * Invoke in the template document with an "end" trigger:
+ *   ${&export.jsx:end} 
+ */
+
+var targetFile = new File("~/out.indd");
+script.document.saveACopy(targetFile);
+script.document.close(SaveOptions.NO);
+return "Document saved to " + targetFile;
+```
 
 ## ACTION (`!`)
 Executes a special action. The first (and required) argument specifies the action type to execute.
@@ -637,9 +770,9 @@ For the table style actions `tstyle`, `tcstyle`, `tcrstyle` and `tccstyle`, the 
 The name of the referenced style must match the name in InDesign exactly (including casing). It can either refer to the name of a style at top-level or the full "path" to a style in case it is contained in one or more style groups. In case of grouped styles, the group name(s) are separated from the style name using forward slashes `/`. The style name must always be the last part of the path. 
 
 For example: Given the following grouping structure:
-- StyleGroupA
-  - StyleGroupB
-    - MyPStyle
+- `StyleGroupA`
+  - `StyleGroupB`
+    - `MyPStyle`
 
 You would use the following statement to refer to it in a `pstyle` action: `${!pstyle:StyleGroupA/StyleGroupB/MyStyle}`
 
@@ -661,7 +794,7 @@ ${-5}
 
 The `ROWREPEAT` statement starts an implicit _Block_ on the entire row, which cannot be terminated explicitly, meaning that `ELSE` and `END` are _not_ supported for the `ROWREPEAT` itself (they are supported for any child statement on the row). For context changing result types (Element, Attribute and Text), the context is changed for all statements on the same table row as the `ROWREPEAT` statement.
 
-If the collection has no items or the number is equal to or less than `0` then the row on which the statement is defined is removed. The statement must always be the first statement in the first cell of a table row and a table row can contain only one `ROWREPEAT` statement. Tt is valid to have multiple rows in the same table with `ROWREPEAT` statements though.
+If the collection has no items or the number is equal to or less than `0` then the row on which the statement is defined is removed. The statement must always be the first statement in the first cell of a table row and a table row can contain only one `ROWREPEAT` statement. It is valid to have multiple rows in the same table with `ROWREPEAT` statements though.
 
 The behavior of `ROWREPEAT` in terms of how the path result is interpreted, as well as the set of special attributes (e.g. `@rxc-index`) that are available is identical to that of `LOOP`. Please refer to its documentation section on this.
 
@@ -672,11 +805,11 @@ Data Sources can be in the XML, JSON, CSV or XLSX (Excel) format. Non-XML data s
 
 If the input file is an XML file, then that file is used as-is. The rest of this chapter will explain how the other file types are converted.
 
-> In all examples in this chapter _absolute_ XPaths are used, starting at the root e.g. `/data/persons/...`. In practice the root can usually be omitted in paths in Rxindi as it is the default data context => `persons/...`
+> In all examples in this chapter _absolute_ XPaths are used, starting at the root e.g. `/data/persons/...`. In practice the root can usually be omitted in paths in Rxindi as it is the default data context: `persons/...`
 
 ## Mapping Modes
 
-Conversion from JSON, CSV or XLSX to XML can be done in many different ways. For sake of consistency and compatibility Rxindi has settled on providing a limited set of options for the automatic conversion which is suited for the majority of common use cases. If you need a very specific solution that the automatic conversion cannot offer, you can convert the original data to XML outside of Rxindi using an external tool, website or service and use the resulting XML as data source for Rxindi instead.
+Conversion from JSON, CSV or XLSX to XML can be done in different ways. For sake of consistency and compatibility Rxindi has settled on providing a limited set of options for the automatic conversion which is suited for the majority of common use cases. If you need a very specific solution that the automatic conversion cannot offer, you can convert the original data to XML outside Rxindi using an external tool, website or service and use the resulting XML as data source for Rxindi instead.
 
 The conversion behavior is controlled by a "Mapping Mode". Rxindi currently offers three:
 - `Default`
@@ -772,7 +905,7 @@ The `Default` mapping mode maps JSON in such a way that ensures that all origina
 </data>
 ```
 
-To refer to the `name` property of `children`, the following XPaths can used:
+To refer to the `name` property of `children`, the following XPaths can be used:
 ```
 /data/children/name  => "childObject"
 /data/*[@name="children"]/*[@name="name"]  => "childObject"
@@ -824,7 +957,7 @@ The `Raw` mapping mode for JSON is very similar to `Default` mode, the only diff
 </data>
 ```
 
-To refer to the `name` property of `children`, the following XPath can used:
+To refer to the `name` property of `children`, the following XPath can be used:
 ```
 /data/p[@name="children"]/p[@name="name"]  => "childObject"
 ```
@@ -875,7 +1008,7 @@ For new projects the `Default` mapping mode is recommended.
 </Root>
 ```
 
-To refer to the `name` property of `children`, the following XPath can used:
+To refer to the `name` property of `children`, the following XPath can be used:
 ```
 /Root/children/name   => "childObject"
 ```
@@ -968,7 +1101,7 @@ The `Default` mapping mode maps the rows of the CSV to row XML elements and crea
 </data>
 ```
 
-To refer to the `Location` column of the second row, the following XPaths can used:
+To refer to the `Location` column of the second row, the following XPaths can be used:
 ```
 /data/row[2]/Location  => "Amsterdam"
 /data/row[2]/*[1]  => "Amsterdam"
@@ -1038,7 +1171,7 @@ The `Raw` mapping mode maps the rows of the CSV to row XML elements and creates 
 </data>
 ```
 
-To refer to the `Location` column of the third row, the following XPaths can used:
+To refer to the `Location` column of the third row, the following XPaths can be used:
 ```
 /data/row[3]/c[1]  => "Amsterdam"
 /data/row[@index=3]/c[@index=1]  => "Amsterdam"
@@ -1054,7 +1187,7 @@ For new projects the `Default` or `Raw` mapping mode is recommended.
 
 - The first line in the CSV is expected to be a header with column names
 - Following lines contain rows with values
-- No value type information can be inferred from CSV so everything is treated as type `string`
+- No value type information can be inferred from CSV, so everything is treated as type `string`
 - The root element in the XML is always named `Root` with `type="array"`
 - Every row in the CSV becomes a `Row` XML element with `type="object"`
 - Each column for every row becomes an XML element with the name being the name of the column and the value the cell value
@@ -1097,7 +1230,7 @@ For new projects the `Default` or `Raw` mapping mode is recommended.
 </Root>
 ```
 
-To refer to the `Location` column of the second row, the following XPath can used:
+To refer to the `Location` column of the second row, the following XPath can be used:
 ```
 /Root/Row[2]/Location  => "Amsterdam"
 ```
@@ -1193,7 +1326,7 @@ The `Default` mapping mode maps all sheets of the XLSX to sheet XML elements and
 </data>
 ```
 
-To refer to the `Location` column of the second row, the following XPaths can used:
+To refer to the `Location` column of the second row, the following XPaths can be used:
 ```
 /data/sheet[1]/row[2]/Location  => "Amsterdam"
 /data/*[1]/*[2]/*[1]  => "Amsterdam"
@@ -1273,7 +1406,7 @@ The `Raw` mapping mode maps the sheets and rows of the XLSX to XML elements and 
 </data>
 ```
 
-To refer to the `Location` column of the second row, the following XPaths can used:
+To refer to the `Location` column of the second row, the following XPaths can be used:
 ```
 /data/sheet[1]/row[3]/c[1]  => "Amsterdam"
 /data/sheet[@index=1]/row[@index=3]/c[@index=1]  => "Amsterdam"
@@ -1344,7 +1477,7 @@ For new projects the `Default` or `Raw` mapping mode is recommended.
 </Root>
 ```
 
-To refer to the `Location` column of the second row, the following XPath can used:
+To refer to the `Location` column of the second row, the following XPath can be used:
 ```
 /Root/Sheet[1]/Row[2]/Location
 ```
@@ -1357,6 +1490,34 @@ Possible values for the `type` attribute on the column element:
 - `duration`
 - `string`
 - `null`
+
+---
+# API
+
+Rxindi has a small public API that can be used to trigger processing of a document from an external script. The API is exposed through ExtendScript, but may also be used via UXP and other (scripting) languages / libraries by wrapping the API call in a `doScript("...")` call on the InDesign `Application` object. Make sure to explicitly specify the `ScriptLanguage` `JAVASCRIPT` in the `doScript` arguments in this case.
+
+Processing a document is invoked by raising an event of the `rxcle.rxindi.api` type. The argument for this event (via the `data` prop) is a JSON object encapsulated in a string. Everything except for the contents of this string-encoded JSON object is boilerplate code and the same for every call.
+
+```javascript
+var ppLib = new ExternalObject("lib:PlugPlugExternalObject");
+var eventObj = new CSXSEvent();
+eventObj.type = "rxcle.rxindi.api";
+eventObj.data = '{ "type": "process", "datasource": "", "parameter": "" }';
+eventObj.dispatch();
+```
+
+The properties on the data JSON object are as follows
+
+| Property       | Type     | Meaning           |
+|----------------|----------|-------------------|
+| `type`         | `string` | Must be `process` |
+| `datasource`   | `string` | Optional full path to the Data Source to use. Use an empty string to clear, non-string values are ignored. |
+| `parameter`    | `string` | Optional process parameter to use. Use an empty string to clear, non-string values are ignored. |
+
+
+Note that the API is only available when the Rxindi plugin is active and its panel is visible in InDesign. The API works asynchronously, meaning that the call to `dispatch` returns immediately and processing is scheduled in the background and will only start if the current script is fully completed. In order to perform additional scripting actions _after_ processing you can use a `SCRIPT` Rxindi statement in the template document using the `end` trigger. 
+
+As with processing through the Rxindi panel, the currently active document in InDesign is used, and it has to be unmodified. To use a specific (other) document, load, activate (and if necessary save) it first via script before invoking the process API call.
 
 ---
 Copyright ® 2020-2024 Rxcle. All Rights reserved.
