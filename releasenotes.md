@@ -2,6 +2,10 @@
 
 ## This release
 
+**Version 1.5.1**
+
+- InDesign 2025 (20.0) support
+
 **Version 1.5.0**
 
 - Auto trigger scripts on init, start or end | [details](#script-triggers)
