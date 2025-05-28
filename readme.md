@@ -1,17 +1,38 @@
-# Rxindi
+# Rxindi Document Composer
 
-Rxindi is an [Adobe InDesign Extension](https://exchange.adobe.com/apps/cc/103684/rxindi) that allows for powerful one-click data merge, document composition and dynamic processing of reusable InDesign templates based on content coming from a variety of formats.
+Rxindi is a plugin for Adobe InDesign that allows for powerful one-click data merge, document composition and dynamic processing of reusable InDesign templates based on content coming from a variety of formats.
 
-1. Get the [Rxindi InDesign Extension](https://exchange.adobe.com/apps/cc/103684/rxindi) on Adobe Marketplace
-2. Open its interface via `Window` `>` `Extensions` `>` `Rxindi`
+Rxindi comes in two editions:
+- [Rxindi Document Composer](https://exchange.adobe.com/apps/cc/6ab1bd21/rxindi-document-composer) (latest, for InDesign 2025 or newer)
+- [Rxindi "Classic"](https://exchange.adobe.com/apps/cc/103684/rxindi) (for InDesign 2019 or newer)
+
+## Getting Started
+
+1. Get Rxindi on Adobe Exchange marketplace
+2. Open its interface:
+   - Rxindi Document Composer: `Plug-ins` `>` `Rxindi`
+   - Rxindi "Classic": `Window` `>` `Extensions` `>` `Rxindi`
 3. Create a template InDesign document with special placeholder statements inside text frames for any variable data or automation that needs to occur
 4. Select a Data Source file: Excel (XLSX), CSV, XML or JSON
 5. Process the document
 
 Rxindi is simple to use, very lightweight and portable. The statements used for the processing instructions are all plain text and stored within you regular InDesign documents. No special plugins are needed to write them or to open/edit documents that contain them.
 
-- [Full user manual](help.md) (also included with Rxindi)
-- [Release notes](releasenotes.md) for the latest version
+### Documentation
+
+#### Rxindi Document Composer
+
+  - [Full user manual v2](v2/help.md)
+  - [Release notes v2](v2/releasenotes.md)
+  - [Migration guide v2](v2/migration.md)
+  - [API documentation v2](v2/api.md)
+
+#### Rxindi "Classic"
+
+  - [Full user manual v1](v1/help.md)
+  - [Release notes v1](v1/releasenotes.md)
+
+### Release notes 
 
 ## Capabilities
 - Use XML, CSV, JSON or XLSX as input data
