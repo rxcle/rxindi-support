@@ -18,7 +18,7 @@ Rxindi comes in two editions:
 
 Rxindi is simple to use, very lightweight and portable. The statements used for the processing instructions are all plain text and stored within you regular InDesign documents. No special plugins are needed to write them or to open/edit documents that contain them.
 
-For some hands-on action, have a look at the [examples](v2/examples/README.md) 
+For some hands-on action, have a look at the [examples](v2/examples/) 
 
 ### Documentation
 
