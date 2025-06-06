@@ -1,0 +1,41 @@
+<Data>
+    <Customer>
+        <FirstName>John</FirstName>
+        <LastName>Doe</LastName>
+        <Email>john.doe@example.com</Email>
+        <Phone>123-456-7890</Phone>
+        <HasCredit>true</HasCredit>
+    </Customer>
+    <OrderInfo>
+        <OrderID>202310016</OrderID>
+        <OrderDate>2023-10-01</OrderDate>
+        <TotalAmount>8.37</TotalAmount>
+        <IsPaid>false</IsPaid>
+    </OrderInfo>
+    <Products source="Website">
+        <Product>
+            <ID>107.234.23</ID>
+            <Name>Blue Pencil</Name>
+            <Description>A blue pencil for writing and drawing</Description>
+            <Image>Images/BluePencil.png</Image>
+            <Price>1.99</Price>
+            <InStock>true</InStock>
+        </Product>
+        <Product>
+            <ID>221.876.17</ID>
+            <Name>Soft Eraser</Name>
+            <Description>A soft eraser for removing pencil marks</Description>
+            <Image>Images/SoftEraser.png</Image>
+            <Price>0.89</Price>
+            <InStock>false</InStock>
+        </Product>
+        <Product>
+            <ID>334.567.89</ID>
+            <Name>Sketchbook</Name>
+            <Description>A sketchbook for drawing and sketching</Description>
+            <Image>Images/Sketchbook.png</Image>
+            <Price>5.49</Price>
+            <InStock>true</InStock>
+        </Product>
+    </Products>
+</Data>
