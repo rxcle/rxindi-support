@@ -2,8 +2,9 @@
 
 Rxindi is a plugin for Adobe InDesign that allows for powerful one-click data merge, document composition and dynamic processing of reusable InDesign templates based on content coming from a variety of formats.
 
-Rxindi comes in two editions:
-- [Rxindi Document Composer](https://exchange.adobe.com/apps/cc/6ab1bd21/rxindi-document-composer) (latest, for InDesign 2025 or newer)
+Rxindi comes in three editions:
+- [Rxindi Document Composer](https://exchange.adobe.com/apps/cc/6ab1bd21/rxindi-document-composer) (latest complete edition, for InDesign 2025 or newer)
+- [Rxindi Free](https://exchange.adobe.com/apps/cc/9c781333/rxindi-free) (for non-commercial and evaluation purposes)
 - [Rxindi "Classic"](https://exchange.adobe.com/apps/cc/103684/rxindi) (for InDesign 2019 or newer)
 
 ## Getting Started
@@ -11,6 +12,7 @@ Rxindi comes in two editions:
 1. Get Rxindi on Adobe Exchange marketplace
 2. Open its interface:
    - Rxindi Document Composer: `Plug-ins` `>` `Rxindi`
+   - Rxindi Free: `Plug-ins` `>` `Rxindi Free`
    - Rxindi "Classic": `Window` `>` `Extensions` `>` `Rxindi`
 3. Create a template InDesign document with special placeholder statements inside text frames for any variable data or automation that needs to occur
 4. Select a Data Source file: Excel (XLSX), CSV, XML or JSON
@@ -22,7 +24,7 @@ For some hands-on action, have a look at the [examples](v2/examples/)
 
 ### Documentation
 
-#### Rxindi Document Composer
+#### Rxindi Document Composer & Free
 
   - [Full user manual v2](v2/help.md)
   - [Release notes v2](v2/releasenotes.md)
