@@ -1,5 +1,9 @@
 # Rxindi Release Notes
 
+**Version 2.0.1** | _2025-08-27_
+
+- Fixes critical issues in CSV and XLSX data source loading
+
 **Version 2.0** | _2025-05-23_
 
 - Improved line break handling for data source text | [details](#line-breaks)
