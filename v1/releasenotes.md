@@ -2,11 +2,15 @@
 
 ## This release
 
-**Version 1.5.1**
+**Version 1.5.2**
 
-- InDesign 2025 (20.0) support
+- InDesign 2026 support
 
-**Version 1.5.0**
+**Version 1.5.1** | _2024-09-12_
+
+- InDesign 2025 support
+
+**Version 1.5.0** | _2024-05-06_
 
 - Auto trigger scripts on init, start or end | [details](#script-triggers)
 - Allow custom data source selection in (init trigger) script | [details](#script-triggers)
@@ -124,4 +128,4 @@ The Options menu has been expanded with a new Sub-menu: `Display`. It contains t
 - Initial release
 
 ---
-Copyright ® 2020-2024 Rxcle. All Rights reserved.
+Copyright ® 2020-2025 Rxcle. All Rights reserved.
