@@ -50,7 +50,7 @@ if (plugin) {
 }
 ```
 
-Note that although the `invokeCommand` UXP function returns a `Promise`, there is no guarantee that the invoked command is done executing when the promise is resolved. If you want to execute additional script code when processing is done, set the `endScript` argument on the API to the path to a script to execute when processing is done.
+Note that although the `invokeCommand` UXP function returns a `Promise`, there is no guarantee that the invoked command is done executing when the promise is resolved. If you want to execute additional script code when processing is done, set the `finalizeScript` argument on the API to the path to a script to execute when processing is done.
 
 ## Indirect execution
 
@@ -67,7 +67,7 @@ app.doScript(
 
 ## Script Callback
 
-The `finalizeScript` arguments can be set to the path to a script file. This script is ran as the very last step for the given command (e.g. processing). 
+The `finalizeScript` argument can be set to the path to a script file. This script is run as the very last step for the given command (e.g. processing). 
 
 - It must be written either in ExtendScript (.jsx/.js) or UXP Script (.idjs) format - AppleScript (or Visual Basic) are not supported
 - The path provided here _must_ be an absolute path - relative paths are not supported

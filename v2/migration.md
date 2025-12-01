@@ -18,11 +18,11 @@ For automation, Rxindi v2.0 has a completely new scripting API. The classic API 
 
 Triggers for the `SCRIPT` statement, via the `:init`, `:start` and `:end` suffix, have been removed. To select a data source via a script, which was possible with the `init` trigger previously, create a custom script which calls Rxindi through its extensive new API and execute that script directly instead. 
 
-Functionality for triggering statements on `start` and `end` remain available in a different form: Auto Trigger Components. For example, instead of `${&myscript:start}`, use: `${#on:start}${&myscript}${.}`. The available Component triggers are: `on:start`, `on:end` and `on:after`. To run scripts or other statements that act upon a fully processed document (e.g. to save/export), use the `on:after` trigger, which is the closest functional equivalent to the `:end` legacy script trigger.
+Functionality for triggering statements on `start` and `end` remains available in a different form: Auto Trigger Components. For example, instead of `${&myscript:start}`, use: `${#on:start}${&myscript}${.}`. The available Component triggers are: `on:start`, `on:end` and `on:after`. To run scripts or other statements that act upon a fully processed document (e.g. to save/export), use the `on:after` trigger, which is the closest functional equivalent to the `:end` legacy script trigger.
 
 ### Component Names
 
-Component names in Rxindi v2.0 have stricter rules, to ensure correct matching behavior and avoid blocking potential future usecases. The name was (mostly) unrestricted in previous versions. The allowed name for a component in Rxindi v2.0 now follows the same rules that apply to an XML Element name: It must start with a letter or underscore, and can only contain letters, digits, underscores, hyphens, or dots. The semicolon is only allowed as a (known) prefix separator. The only allowed prefixes are `fn:` and `on:`.
+Component names in Rxindi v2.0 have stricter rules, to ensure correct matching behavior and avoid blocking potential future use-cases. The name was (mostly) unrestricted in previous versions. The allowed name for a component in Rxindi v2.0 now follows the same rules that apply to an XML Element name: It must start with a letter or underscore, and can only contain letters, digits, underscores, hyphens, or dots. The colon is only allowed as a (known) prefix separator. The only allowed prefixes are `fn:` and `on:`.
 
 ## From v1.0-v1.4
 

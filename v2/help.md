@@ -139,7 +139,7 @@ Let us break this down into its individual elements
 
 | Part             | Statement | Description                                                                                                                                                                                                                                                                                                   |
 | ---------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `${?HasTitle=1}` | `IF`      | The `?` indicates that this is an `IF` statement. It is immediately followed by an expression, in this case `ShouldShowTitle`. If this has value "1" then consecutive statements are processed.                                                                                                               |
+| `${?HasTitle=1}` | `IF`      | The `?` indicates that this is an `IF` statement. It is immediately followed by an expression, in this case `HasTitle`. If this has value "1" then consecutive statements are processed.                                                                                                               |
 | `${=Title}`      | `OUTPUT`  | Output the value of `Title`, but because it directly follows the `IF` statement, this only happens if that evaluated to _true_.                                                                                                                                                                               |
 | `${.}`           | `END`     | This ends the _statement block_ started by the `IF` statement. It is necessary here because otherwise _everything_ following the `IF` would be processed only if that evaluated to _true_. We only wanted the `OUTPUT` statement for the Title to be conditional though so that is why we end the block here. |
 | `${=LastName}`   | `OUTPUT`  | Output the value of `LastName`. Because this follows an `END` this statement is _not_ conditional and always processed.                                                                                                                                                                                       |
@@ -632,7 +632,6 @@ Executes a custom external script.
 ${&AddPages}
 ${&RotateFrame,myFrame}
 ${&PlacePicture,pictureFrame,string('Alt text')}
-${&Export:end}
 ```
 
 Scripts must be in the Adobe ExtendScript (js/jsx) or UXP Script (idjs) format and use (only) statements that are compatible with the version of InDesign being used to process the document. The script must have either the `.js`, `.jsx` or `.idjs` extension and be located in the same directory as the InDesign template document being processed, or in a `scripts` subfolder below the document being processed. Global scripts are _not_ considered. When referencing the script, the casing must match that of the script filename exactly. The file extension can be omitted, in which case a file with a supported extension is automatically looked up.
@@ -1388,7 +1387,7 @@ For new projects the `Default` or `Raw` mapping mode is recommended.
 - If cells are typed, this type information is included with the `type` attribute at column level
 - The root element in the XML is always `Root` with `type=array`
 - Every sheet in the XLSX becomes a `Sheet` XML element with `type=array`
-- Every row in the XSLX becomes a `Row` XML element with `type=object`
+- Every row in the XLSX becomes a `Row` XML element with `type=object`
 - Each column with value for every row becomes an XML Element with the name being the name of the column and the value the cell value
 
 #### Resulting XML from XLSX with Classic Mode
@@ -1452,8 +1451,8 @@ The `OUTPUT` statement treats line break characters in text selected in the data
 
 | Character                | Hex    | Behavior                            |
 | ------------------------ | ------ | ----------------------------------- |
-| Linefeed (LF)            | 0x0A   | Forced Line Break within parapgraph |
-| Line Separator (LS)      | 0x2028 | Forced Line Break within parapgraph |
+| Linefeed (LF)            | 0x0A   | Forced Line Break within paragraph  |
+| Line Separator (LS)      | 0x2028 | Forced Line Break within paragraph  |
 | Carriage Return (CR)     | 0x0D   | Paragraph Return                    |
 | Paragraph Separator (PS) | 0x2029 | Paragraph Return                    |
 

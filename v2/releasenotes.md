@@ -1,5 +1,10 @@
 # Rxindi Release Notes
 
+**Version 2.0.2** | _2025-11-28_
+
+- Fixes issue with Rxindi Panel Menu not being shown under certain circumstances
+- Fixes minor issues in documentation
+
 **Version 2.0.1** | _2025-08-27_
 
 - Fixes critical issues in CSV and XLSX data source loading
@@ -8,7 +13,7 @@
 
 - Improved line break handling for data source text | [details](#line-breaks)
 - Export ACTION type for saving to PDF or INDD | [details](#export)
-- PLACE statement can now target frames | [detail](#target-for-place)
+- PLACE statement can now target frames | [details](#target-for-place)
 - Function Components | [details](#function-components)
 - Auto Trigger Components | [details](#auto-trigger-components)
 - New extensive scripting API based on UXP | [details](#api)
@@ -23,11 +28,11 @@
 
 ## Changes in detail
 
-Rxindi v2.0 is a major version upgrade which is built on top of the latest plugin framework from Adobe. This makes Rxindi faster, more memory efficient, and future ready. Both the User Interface and much of Rxindi's behavior remains similar as previous versions, but whith some notable improvements and new functionality. Rxindi v2.0 is highly backward compatible with Rxindi v1.5 through Compatibility Mode.
+Rxindi v2.0 is a major version upgrade which is built on top of the latest plugin framework from Adobe. This makes Rxindi faster, more memory efficient, and future ready. Both the User Interface and much of Rxindi's behavior remains similar as previous versions, but with some notable improvements and new functionality. Rxindi v2.0 is highly backward compatible with Rxindi v1.5 through Compatibility Mode.
 
 ### Backward Compatibility
 
-Rxindi v2.0 requires InDesign 2025 (v20) or newer. If you need to work with older versions InDesign (2019/v14+) then please continue to use Rxindi v1.5.
+Rxindi v2.0 requires InDesign 2025 (v20) or newer. If you need to work with older versions of InDesign (2019/v14+) then please continue to use Rxindi v1.5.
 
 Explicit backward compatibility for Rxindi Templates created for Rxindi v1.0 through v1.4 is not available in Rxindi v2.0. A Compatibility Mode setting for Rxindi v1.5 templates is available. Use Rxindi v1.5 to process older templates and/or to migrate to a v1.5 compatible template before switching to Rxindi v2.0. See the "Migration guide" document for more details.
 
@@ -65,7 +70,7 @@ Note: legacy Script Triggers are still available when running in v1.5 compatibil
 
 #### Target for Place
 
-the `PLACE` statement now accepts the name of a target frame for the Component instance as it third argument, e.g. `${@CompA,,TargetFrame1}`. This works mostly in the same way as it does for the `OUTPUT` statement, where output is appended to the end of the target frame.
+the `PLACE` statement now accepts the name of a target frame for the Component instance as its third argument, e.g. `${@CompA,,TargetFrame1}`. This works mostly in the same way as it does for the `OUTPUT` statement, where output is appended to the end of the target frame.
 
 #### Function Components
 
@@ -73,7 +78,7 @@ You can now define a "Function Component" by prefixing the Component name with `
 
 #### Auto Trigger Components
 
-Auto Trigger Components are automatically instantiated by Rxindi, based on a processing trigger. They are declared using a Component name with the `on:` prefix. There are trhee triggers available: `start`, `end` and `after`. For example, the following will automatically run a script when processing starts `${@on:start}${&myscript.jsx}${.}`. Auto Trigger Components are a more flexible approach to the "Script Trigger" functionality from previous versions, because within an Auto Trigger Component, _all_ Rxindi statements are valid. 
+Auto Trigger Components are automatically instantiated by Rxindi, based on a processing trigger. They are declared using a Component name with the `on:` prefix. There are three triggers available: `start`, `end` and `after`. For example, the following will automatically run a script when processing starts `${@on:start}${&myscript.jsx}${.}`. Auto Trigger Components are a more flexible approach to the "Script Trigger" functionality from previous versions, because within an Auto Trigger Component, _all_ Rxindi statements are valid. 
 
 #### Stricter names
 
@@ -81,6 +86,10 @@ To reduce unintentional mistakes and to enable potential future use-cases, the n
 
 ---
 # Previous releases
+
+**Version 1.5.2** | _2025-09-30_
+
+- InDesign 2026 support
 
 **Version 1.5.1** | _2024-09-12_
 
