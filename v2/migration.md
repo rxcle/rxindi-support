@@ -167,4 +167,4 @@ Previously, any return value except for a `boolean` value of `false` was ignored
     - Attribute `@type` is only available on column elements, it indicates the type as specified in the original file.
 
 ---
-Copyright ® 2020-2025 Rxcle. All Rights Reserved.
+Copyright ® 2020-2026 Rxcle. All Rights Reserved.

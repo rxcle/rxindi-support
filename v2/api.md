@@ -103,4 +103,4 @@ The return value of the script is _ignored_. Throw an error to indicate failure.
 Rxindi v1.5 offers a different, more limited, API, which is exposed via ExtendScript using the `ExternalObject` mechanism. This API is **not supported** in Rxindi v2.0, not even in v1.5 compatibility mode.
 
 ---
-Copyright ® 2020-2025 Rxcle. All Rights Reserved.
+Copyright ® 2020-2026 Rxcle. All Rights Reserved.

@@ -16,6 +16,8 @@ The external data that is to be used to generate documents in Rxindi is called t
 
 Rxindi is not aware and does not care about the contents or structure of the Data Source as long as it is of a supported file type and the paths in your template match the structure of the file. These paths are written using the universal standard _XPath_. Internally all data in Rxindi is treated as XML. If the data source is of a different type, then it gets automatically and transparently converted to XML using a transparent mapping convention. See the [Data Source Reference](#data-source-reference) for more information.
 
+The default behavior of Rxindi is to process a single document per Data Source. It is, however, also possible to automatically process multiple documents from a single Data Source when that contains multiple rows or records. See the section on [Multi-Record Processing](#multi-record-processing) for more information.
+
 ## Statements
 
 Statements are instructions that tell Rxindi what to do. They are placed directly inside an InDesign Text Frame (or actually: Story). Rxindi supports many statements, for example: `OUTPUT`, `IF`, `LOOP`, and more. Every statement is associated with a single character, e.g. the `OUTPUT` statement is represented by the "equals" character: `=`.
@@ -164,6 +166,30 @@ ${?HasTitle=1;=Title;:;=FirstName;.;=string(' ');=LastName}
 ```
 
 Here the entire `IF`-`OUTPUT`-`ELSE`-`OUTPUT` statement set is placed in a single placeholder and the individual statements are separated by semicolons. The result of this is exactly the same as the previous example.
+
+## Multi-Record Processing
+
+Rxindi has an agnostic attitude towards the layout of the Data Source and makes no assumptions about what it represents. Meaning is given to the data by using statements that take specific data from the Data Source using paths. 
+
+When a Data Source contains multiple logical records/rows of similar data, it could mean that you want to create a single document that contains all this data, organized in a certain way. For this, the `LOOP` and `ROWREPEAT` statements can be used to iterate over the records.
+
+Alternatively, it could mean that you want to generate a separate document for each record. This is possible with Rxindi by indicating explicitly what the logical data "root" elements are inside the Data Source, using a path. If this path resolves to multiple elements, then the document is processed for each matching element. Setting the data root is done with the `ACTION` statement, using the [Set action](#set-action) with the `dataroot` option.
+
+For example, including the following statement in the template document, will cause the document to be processed for each row in a CSV data source (assuming Default Mapping Mode):
+```
+${!set:dataroot,/data/row}
+```
+
+Note that, because Rxindi does _not_ save processed documents by default, you would typically pair this with the [Export action](#export-action):
+```
+${#on:after}
+${!export,concat("record-"\,@rxc-record-index\,".pdf")}
+${.}
+```
+
+Here, the special attribute `@rxc-record-index` is used. This attribute is automatically set by Rxindi to the numerical record index number (starting at 1). Also available is the `@rxc-record-count` attribute, which contains the total number of records.
+
+Note that setting the `dataroot` to a single element (rather than a list) is also perfectly valid. In this case the document is just processed once, though all paths towards data in the template will be relative to the given root element.
 
 ---
 ## User Interface
@@ -704,6 +730,7 @@ Below is a list of all available actions. Note that some actions take an additio
 | `tcrstyle:<name>` | Apply the Cell Style with the specified name to (all cells of) the row which the statement is in.    | Not allowed        |
 | `tccstyle:<name>` | Apply the Cell Style with the specified name to (all cells of) the column which the statement is in. | Not allowed        |
 | `export:<preset>` | Export the document to PDF or INDD using the give given preset to the specified filename.            | XPath for Filename |
+| `set:<option>`    | Sets a value for a certain template option. The only available option is: `dataroot`.                | Value              |
 
 Note that an `ACTION` by itself is always executed, it has no condition of its own. In order to make it conditional (or run multiple times) place it after an `IF` or `LOOP` statement.
 
@@ -731,6 +758,32 @@ If a group or a style name contains a literal `/` character then you must escape
 The `export` action will export the current document to file. Typically this action is placed in a `on:after` Trigger Component so that the exported document is complete and clean of processing scaffolding. If no other arguments are supplied, i.e. `${!export}` then the document is exported to PDF using the default PDF Export Preset and using a default filename (export_xxxx.pdf) in the user's default document location. A specific PDF Export Preset can be specified using an argument, e.g. `${!export:MyPreset}`. This preset must be known in InDesign. The filename to export to can be specified by supplying an expression that returns the name (and its path) as the `<target>` parameter. Because this is an expression, this name can be obtained from the data source. To supply a custom hard-coded name you must declare it as valid XPath, e.g. `${!export:MyPreset,string("MyCustomName.pdf")}`.
 
 The file type to export to is defined by the extension of the file name. If no filename or a name without extension is supplied then PDF is assumed. The only supported export types are `pdf` and `indd`.
+
+### Set action
+The `set` action, changes the value of one of the predefined template options. A `set` action must be specified in the root of a document, meaning that it must be directly in a text frame and cannot be nested in e.g. an `IF` statement. The value for each option may only be set once per template. 
+
+| Option     | Default | Description                                                                                             |
+|------------|---------|---------------------------------------------------------------------------------------------------------|
+| `dataroot` | `/*`    | XPath to the effective root element in the Data Source. All other XPaths will be relative to this root. |
+
+#### Option dataroot
+The `dataroot` option can be set to an XPath statement that resolves to either a single element or a list of elements in the Data Source.
+
+- When resolved to a single element:
+  - This element will be the "base" context to which all other paths in the template will be relative.
+ 
+- When resolved to a list of elements:
+  - Rxindi will iterate over the list and process the template for each element in the list.
+  - This enables multi-processing of a single template using a single Data Source that contains multiple records or rows.
+  - Note that, because on each iteration the template is reset, this functionality is only useful if combined with either an `export` action, or a custom script that handles persistence for every iteration.
+
+Example: `${!set:dataroot,/data/sheet[1]}` 
+ - When using this for an Excel Data Source, the first worksheet would be set as dataroot. Now other statements can use relative paths (e.g. to rows) from this root.
+ - Because the data root points to a single element, only this element is used for processing, and a single document is produced.
+
+Example: `${!set:dataroot,/data/sheet[1]/row}` 
+ - When using this for an Excel Data Source, all rows of first worksheet would be used as dataroot. The template is processed for every row in this list.
+
 
 ## ROWREPEAT (`-`)
 Loop over a collection or numeric value obtained from the given expression and repeats a table row for each value. 
@@ -1461,4 +1514,4 @@ The combination or CR directly followed by LF, which is a common line separator 
 Note that this behavior applies from Rxindi v2.0 and up. Rxindi Classic would treat all line break characters a Forced Line Break. This behavior is retained when processing a document in v1.5 Compatibility mode.
 
 ---
-Copyright ® 2020-2025 Rxcle. All Rights Reserved.
+Copyright ® 2020-2026 Rxcle. All Rights Reserved.

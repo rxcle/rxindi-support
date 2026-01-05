@@ -1,5 +1,32 @@
 # Rxindi Release Notes
 
+**Version 2.1** | _2026-01-04_
+
+- Custom data root | [details](#custom-data-root)
+- Multi-record processing | [details](#multi-record-processing)
+- Simplified literal strings for XPaths | [details](#simplified-literal-strings-for-xpaths)
+
+[Previous releases](#previous-releases)
+
+## Changes in detail
+
+### Custom Data Root
+
+Path arguments for statements in the template refer to data in the Data Source and are relative to the "data root" element. By default this is the XML root element, which is `/data` on JSON, CSV and XSLX Data Sources. 
+
+Starting with this release, any element in the Data Source can be selected as the data root. This is done using the new `SET` `ACTION` and the `dataroot` option, for which you can specify an XPath. For example `${!set:dataroot,/Custom/MyData}`; This sets the data root to the `MyData` child element and all other paths in the template will be relative to that.
+
+### Multi-record processing
+
+With Rxindi v2.1 you can now process the same template multiple times, using the records/rows from the same Data Source. When used in combination with the `EXPORT` `ACTION`, this allows for easy batch processing of many documents in one go. This functionality is implicitly enabled by specifying an XPath that results in multiple elements for the `dataroot`. For example, for CSV Data Sources, the following statement would cause the template document to be processed for every row in the CSV: `${!set:dataroot,/data/row}`.
+
+### Simplified literal strings for XPaths
+
+For any statement that takes an XPath as argument, e.g. `OUTPUT` and `EXPORT` `ACTION`, you can now just use double or single quoted strings to specify a literal text value. Previously you would have to use the XPath function `string("...")` - which is also still valid. This means that e.g. `${=string("Hello World")}` can now be written as `${="Hello World"}`
+
+---
+# Previous releases
+
 **Version 2.0.2** | _2025-11-28_
 
 - Fixes issue with Rxindi Panel Menu not being shown under certain circumstances
@@ -11,81 +38,18 @@
 
 **Version 2.0** | _2025-05-23_
 
-- Improved line break handling for data source text | [details](#line-breaks)
-- Export ACTION type for saving to PDF or INDD | [details](#export)
-- PLACE statement can now target frames | [details](#target-for-place)
-- Function Components | [details](#function-components)
-- Auto Trigger Components | [details](#auto-trigger-components)
-- New extensive scripting API based on UXP | [details](#api)
-- Manual is always opened directly in the browser | [details](#ui-changes)
-- Show actual compatibility version in UI | [details](#ui-changes)
-- Requires InDesign 2025 (20.0) or newer | [details](#backward-compatibility)
-- Minimum backward compatibility version is now v1.5 | [details](#backward-compatibility)
-- Removed support for SCRIPT "init" trigger | [details](#removal-of-script-triggers)
+- Improved line break handling for data source text
+- Export ACTION type for saving to PDF or INDD
+- PLACE statement can now target frames
+- Function Components
+- Auto Trigger Components
+- New extensive scripting API based on UXP
+- Manual is always opened directly in the browser
+- Show actual compatibility version in UI
+- Requires InDesign 2025 (20.0) or newer
+- Minimum backward compatibility version is now v1.5
+- Removed support for SCRIPT "init" trigger
 - Using the latest Adobe plugin framework
-
-[Previous releases](#previous-releases)
-
-## Changes in detail
-
-Rxindi v2.0 is a major version upgrade which is built on top of the latest plugin framework from Adobe. This makes Rxindi faster, more memory efficient, and future ready. Both the User Interface and much of Rxindi's behavior remains similar as previous versions, but with some notable improvements and new functionality. Rxindi v2.0 is highly backward compatible with Rxindi v1.5 through Compatibility Mode.
-
-### Backward Compatibility
-
-Rxindi v2.0 requires InDesign 2025 (v20) or newer. If you need to work with older versions of InDesign (2019/v14+) then please continue to use Rxindi v1.5.
-
-Explicit backward compatibility for Rxindi Templates created for Rxindi v1.0 through v1.4 is not available in Rxindi v2.0. A Compatibility Mode setting for Rxindi v1.5 templates is available. Use Rxindi v1.5 to process older templates and/or to migrate to a v1.5 compatible template before switching to Rxindi v2.0. See the "Migration guide" document for more details.
-
-### Line Breaks
-
-The translation of line break characters in the data source has changed to provide more control and to be more in line with how InDesign itself treats line breaks. Depending on the document and data, this may give a different result than was the case for previous versions. To get the behavior from earlier versions, switch the compatibility mode to v1.5.
-
-### Export
-
-Saving or exporting a document after processing required either a manual action or a custom script in previous Rxindi releases. With this version this has become much simpler. The `ACTION` statement now has a new "export" action type: `${!export}`. Using this action the current document can be exported to either PDF or INDD. For PDF you can optionally specify the Export Preset to use and for both INDD and PDF you can specify (an expression to) the filename to export to. Typically this statement is placed in an [Auto Trigger Component](#auto-trigger-components) of type `on:after`.
-
-### API
-
-Rxindi v2.0 has a completely new and much more extensive scripting API, based on the Adobe UXP scripting platform. The new API allows for automation of _all_ of Rxindi's functionality and even exposes some functionality that is not available from the UI.
-
-Due to platform incompatibilities, the legacy (ExtendScript) API from Rxindi v1.5 is _not_ supported on Rxindi v2.0 - not even in compatibility mode. The Rxindi manual now has a dedicated section that describes the API in detail.
-
-### UI Changes
-
-Rxindi v1.5 would show "Legacy Mode" in the panel UI when switching to compatibility mode. In Rxindi 2.0, instead, it explicitly shows the compatibility version and the mapping mode, e.g., "v1.5 Classic."
-
-The Rxindi Manual is now always opened directly in the browser rather than in a separate plugin window in InDesign.
-
-Rxindi v2.0 does not remember the last visibility state and position of the Rxindi panel. This is different from Rxindi v1.5, where this _would_ be remembered. This change is due to current technical restrictions in the new Adobe plugin framework. To open Rxindi, go to the "Plug-ins" menu or use the InDesign "Plugins" panel. Many of the Rxindi actions (e.g., Process Document) on the Plugins panel will also show the Rxindi Panel.
-
-If you want to automatically show the panel always directly on InDesign startup, you can enable this via the new `Options` > `Display` > `Show on Startup` setting on the Rxindi panel menu. Note that this will always show the panel at its default location, not the location it was at in a previous InDesign session.
-
-### Removal of Script Triggers
-
-Previous versions of Rxindi allowed you to "auto-trigger" scripts with the `SCRIPT` statement using the `:init`, `:start` and `:end` suffix. In Rxindi v2.0 auto-triggering functionality has been moved to Auto Trigger Components instead, which allow for more flexibility. See the Migration Guide for more information.
-
-Note: legacy Script Triggers are still available when running in v1.5 compatibility mode.
-
-### Components
-
-#### Target for Place
-
-the `PLACE` statement now accepts the name of a target frame for the Component instance as its third argument, e.g. `${@CompA,,TargetFrame1}`. This works mostly in the same way as it does for the `OUTPUT` statement, where output is appended to the end of the target frame.
-
-#### Function Components
-
-You can now define a "Function Component" by prefixing the Component name with `fn:`. For example: `${#fn:CompA}<statements>${.}`. With Function Components only Rxindi statements are processed, any InDesign content in the Component definition is ignored when placing. 
-
-#### Auto Trigger Components
-
-Auto Trigger Components are automatically instantiated by Rxindi, based on a processing trigger. They are declared using a Component name with the `on:` prefix. There are three triggers available: `start`, `end` and `after`. For example, the following will automatically run a script when processing starts `${@on:start}${&myscript.jsx}${.}`. Auto Trigger Components are a more flexible approach to the "Script Trigger" functionality from previous versions, because within an Auto Trigger Component, _all_ Rxindi statements are valid. 
-
-#### Stricter names
-
-To reduce unintentional mistakes and to enable potential future use-cases, the naming rules for Components have become a stricter. Component names now must start with a letter or underscore, and can only contain letters, digits, underscores, hyphens, or dots.
-
----
-# Previous releases
 
 **Version 1.5.2** | _2025-09-30_
 
