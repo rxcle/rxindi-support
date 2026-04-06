@@ -2,13 +2,13 @@
 
 ## Introduction
 
-Rxindi is a plugin for Adobe InDesign. It enables you to automatically generate documents with unique data and design aspects from a single template InDesign document and an external data file, which can be of type Excel, XML, CSV, or JSON. This functionality is sometimes called a "Data Merge" or in more general terms "Document Composition". 
+Rxindi is a plugin for Adobe InDesign. It enables you to automatically generate documents with unique data and design elements from a single template InDesign document and an external data file, which can be of type Excel, XML, CSV, or JSON. This functionality is commonly known as "Data Merge" or "Document Composition".
 
-A unique aspect of Rxindi is that template documents can be created without any special tools. Everything is defined with standard InDesign functionality and most of it with plain text. This also means that template documents for Rxindi are completely portable and can be edited or created even when you don't have Rxindi installed.
+A unique aspect of Rxindi is that template documents can be created using only standard InDesign functionality, primarily with plain text; no special tools required. This also means that template documents for Rxindi are completely portable and can be edited or created even when you don't have Rxindi installed.
 
 Rxindi imposes very few requirements on the actual layout of the input files. As long as your data is in one of the supported file types, you should be able to use it as-is.
 
-There is a lot of flexibility and functionality for outputting not only text but also images and QR codes. Additionally, you can perform conditional and repeating actions, change styles, and much more, all based on variable external data.
+There is a lot of flexibility and functionality for outputting not only text but also images and QR codes. Additionally, you can perform conditional logic and repeat structures, change styles, and much more, all based on variable external data.
 
 ## Data Source
 
@@ -141,7 +141,7 @@ Let us break this down into its individual elements
 
 | Part             | Statement | Description                                                                                                                                                                                                                                                                                                   |
 | ---------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `${?HasTitle=1}` | `IF`      | The `?` indicates that this is an `IF` statement. It is immediately followed by an expression, in this case `HasTitle`. If this has value "1" then consecutive statements are processed.                                                                                                               |
+| `${?HasTitle=1}` | `IF`      | The `?` indicates that this is an `IF` statement. It is immediately followed by an expression, in this case `HasTitle`. If this has value "1" then consecutive statements are processed.                                                                                                                      |
 | `${=Title}`      | `OUTPUT`  | Output the value of `Title`, but because it directly follows the `IF` statement, this only happens if that evaluated to _true_.                                                                                                                                                                               |
 | `${.}`           | `END`     | This ends the _statement block_ started by the `IF` statement. It is necessary here because otherwise _everything_ following the `IF` would be processed only if that evaluated to _true_. We only wanted the `OUTPUT` statement for the Title to be conditional though so that is why we end the block here. |
 | `${=LastName}`   | `OUTPUT`  | Output the value of `LastName`. Because this follows an `END` this statement is _not_ conditional and always processed.                                                                                                                                                                                       |
@@ -183,18 +183,18 @@ ${!set:dataroot,/data/row}
 Note that, because Rxindi does _not_ save processed documents by default, you would typically pair this with the [Export action](#export-action):
 ```
 ${#on:after}
-${!export,concat("record-"\,@rxc-record-index\,".pdf")}
+${!export,concat("record-", $x:record-index, ".pdf")}
 ${.}
 ```
 
-Here, the special attribute `@rxc-record-index` is used. This attribute is automatically set by Rxindi to the numerical record index number (starting at 1). Also available is the `@rxc-record-count` attribute, which contains the total number of records.
+Here, the System Variable `$x:record-index` is used. This variable is automatically set by Rxindi to the numerical record index number (starting at 1). Also available is the `$x:record-count` variable, which contains the total number of records.
 
 Note that setting the `dataroot` to a single element (rather than a list) is also perfectly valid. In this case the document is just processed once, though all paths towards data in the template will be relative to the given root element.
 
 ---
 ## User Interface
 
-The user interface of Rxindi consists of a single InDesign panel which can be opened via the `Window` `>` `Extensions` `>` `Rxindi` menu in InDesign. The panel has three sections which can be expanded and collapsed.
+The user interface of Rxindi consists of a single InDesign panel which can be opened via the `Plug-ins` `>` `Rxindi` menu in InDesign. The panel has three sections which can be expanded and collapsed.
 
 - `Prepare`
     - This section has a quick reference guide of all available statements.
@@ -203,28 +203,28 @@ The user interface of Rxindi consists of a single InDesign panel which can be op
         - Validation makes no changes to the document.
 - `Process`
     - Here you can (optionally) select a data source file (XML, JSON, CSV, XLSX).
-      - By default, only the file name of the selected data source is shown; toggle the full path via `Panel Menu` `>` `Options` `>` `Display`.
+      - By default, only the file name of the selected data source is shown; toggle the full path via `Options` `>` `Display`.
     - Optionally, you can also specify a custom processing parameter.
-      - The input field for this is hidden by default; enable it via `Panel Menu` `>` `Options` `>` `Display`.
+      - The input field for this is hidden by default; enable it via `Options` `>` `Display`.
     - The `Process Document` button starts the actual processing.
         - In order to process a document, it must have been _saved_ and _unmodified_.
     - In case `Compatibility Mode` is enabled, this is shown here with a text label.
-      - Toggle this on/off via the Rxindi panel menu under `Options` `>` `Compatibility`.
+      - Toggle this on/off via the Rxindi Options under `Options` `>` `Compatibility`.
 - `Result`
     - This will show the result of the last Validate or Process action.
     - Some errors will include a clickable link that will (attempt to) go to the source statement in the document that caused the error.
 
-The panel menu contains the following items:
-- `Help`: Opens a window with the help text.
-- `Load into XML Structure`: Loads the current data source into InDesign's (XML) Structure.
-- `Options`: Configure Rxindi behavior.
+Additionally, on the top-right of the panel, there are two buttons that open the `Options` and `Help` respectively.
+
+In the `Options` view, the following items can be found. These are also accessible directly via the Rxindi Panel Menu.
+
   - `Compatibility`: Set the processing compatibility mode.
     - `Latest`: (Recommended) Templates are compatible with this version of Rxindi.
-    - `v1.5`: Process in v1.5 compatibility mode - some newer features may not be available.
+    - `Rxindi v2.1`: Process in v2.1 compatibility mode - some newer features may not be available.
+    - `Rxindi v1.5`: Process in v1.5 compatibility mode - some newer features may not be available.
   - `Mapping Mode`: Sets the mode to use for data file mapping (JSON, CSV, XLSX).
     - `Default`: Default mapping behavior. Assumes headers are present for CSV and XLSX and maps them.
     - `Raw`: Do not map property/column names and treat headers for CSV and XLSX as regular data.
-    - `Classic`: Classic mapping behavior, same as in v1.3 and before (implied when using v1.3 Compatibility mode).
   - `Logging`: Set the logging level.
     - `Normal`: (Recommended) Regular logging of processing steps and errors.
     - `Verbose`: Log very detailed information during processing; log files can become large - only enable when troubleshooting.
@@ -232,15 +232,17 @@ The panel menu contains the following items:
     - `Data Source Full Path`: Show the full path of the Data Source (enabled) or only the file name (disabled).
     - `Parameter`: Show the processing Parameter input field in the panel (enabled) or hide it (disabled).
     - `Show on Startup`: Show the Rxindi panel automatically on InDesign startup (enabled) or when explicitly opened (disabled).
-  - `Reinitialize`: Reload Rxindi - Typically only needed in case of issues.
-- `Logs`: Opens the directory that contains the log files.
+  - `Actions`:  Perform advanced actions
+    - `Load into XML Structure`: Loads the current data source into InDesign's (XML) Structure.
+    - `Reinitialize`: Reload Rxindi - Typically only needed in case of issues.
+    - `Logs`: Opens the directory that contains the log files.
 
 ### Compatibility Mode
 In order to add certain new features and improve the general behavior of Rxindi, some versions have breaking changes in behavior compared to a previous one. This is, for example, the case when upgrading to v2.0 from a previous version.
 
 Unfortunately, this _can_ mean that template documents made for an earlier version of Rxindi no longer behave as expected in the latest version, depending on the features of Rxindi used.
 
-Using the `Options` `>` `Compatibility` settings in the Rxindi panel menu, you can explicitly switch the processing behavior back to a previous version to allow you to process these older template documents as-is. When set to anything else but `Latest`, the main Rxindi interface will also display the applied compatibility version, e.g., `v1.5`, to indicate that processing behavior will deviate from what it would be with the latest version.
+Using the `Options` `>` `Compatibility` settings in the Rxindi Options, you can explicitly switch the processing behavior back to a previous version to allow you to process these older template documents as-is. When set to anything else but `Latest`, the main Rxindi interface will also display the applied compatibility version, e.g., `v1.5`, to indicate that processing behavior will deviate from what it would be with the latest version.
 
 The Rxindi manual only explains the functionality and behavior for the _latest_ version, which may not match with the behavior you see in Compatibility Mode. Also, be aware that Compatibility Mode attempts to emulate the old behavior as closely as possible, meaning that newer features and processing improvements may not be available in this mode. 
 
@@ -294,12 +296,9 @@ If you want to use the _literal_ placeholder `${...}` character combination as t
 Note that the zero-width space/non-joiner must be placed _immediately_ before the opening `$` character with no other characters or whitespace in between.
 
 ## Reserved Characters
-Some characters are reserved characters in all statement arguments within Rxindi placeholders and cannot be used directly. This also applies to XPath literal strings and XPath function calls. These reserved characters are:
-- Comma: `,`
-- Semicolon: `;`
-- Closing curly brace: `}`
+The closing curly brace `}` is a reserved characters in all statement arguments within Rxindi placeholders and cannot be used directly. To use it, you must escape it by prefixing it with a backslash: `\}`. This _also_ applies to XPath literal strings and XPath function calls! All other characters can be used directly
 
-To use them in an argument, you have to put a backslash immediately before it, so `\,`. An example of the XPath `concat` function using this convention: `${=concat('\,'\,'\;'\,'\}')}`. This will produce the output `,;}`
+Take special note of the characters comma `,` and semicolon `;` as these are also used to separate statement arguments and statements. The rules for these are as follows: When used in a literal string (with single or double quotes), e.g. `"Hello, world"` or, in case of XPath, in a function `concat("Hello", "World")` then they are not treated as separators. Outside of these contexts they _are_ argument/statement separators. 
 
 ## Processing Parameter
 
@@ -310,17 +309,27 @@ The primary inputs for processing are:
 
 The latter is a custom string that can be set to any value. Its value is not interpreted by Rxindi, but scripts and statements may use this value in a way that makes sense to the template or data to be processed. 
 
-If it has a value, then the parameter is mapped onto the root context as `@rxc-parameter`. This value may be used directly in output or as a filter for any other path. Do note that the value is always stored as a _string_; if you want to use it to, for instance, select a specific numeric index (like a row number in a spreadsheet), then you have to cast it to a number first.
+If it has a value, then the parameter is made available as the `$x:parameter` System Variable. This value may be used directly in output or as a filter for any other path. Do note that the value is always stored as a _string_; if you want to use it to, for instance, select a specific numeric index (like a row number in a spreadsheet), then you have to cast it to a number first.
 
 Examples:
 ```
-${=/@rxc-parameter}
-${=/data/row[number(/@rxc-parameter)]/name}
+${=$x:parameter}
+${=/data/row[number($x:parameter)]/name}
 ```
 
 Scripts receive the current value as the `parameter` property on the `script` object.
 
-The processing parameter can also be set and viewed from the Rxindi panel, but it is hidden by default. To show it, open the Rxindi Panel Menu and click on `Options` `>` `Display` `>` `Parameter`.
+The processing parameter can also be set and viewed from the Rxindi panel, but it is hidden by default. To show it, open the Rxindi Options and toggle `Display` `>` `Parameter`.
+
+## XPath
+
+Many arguments for many Rxindi statements are in the form of a path to certain data in the Data Source. Rxindi uses the [XPath 1.0](https://en.wikipedia.org/wiki/XPath) standard for the syntax of paths.  
+
+XPath is a query language for navigating and selecting parts of a structured document. It treats the document as a tree of nodes and lets you write path expressions to pinpoint specific ones - similar to how a file system path locates a file. For example, `/library/book/title` drills down level by level, while `//title` finds every title node anywhere in the document regardless of depth. Attributes are accessed with @, so `//book[@genre]` selects only book nodes that have a genre attribute.
+
+XPath also supports predicates for filtering and a built-in function library for more precise selections. Predicates are conditions in square brackets - `//book[@genre='fiction']` or `//book[price > 20]` - that narrow down results on the fly. Functions cover string operations (`contains()`, `substring()`), counting and math (`count()`, `sum()`), and positional checks (`position()`, `last()`). An XPath expression always returns one of four types: a node-set, a string, a number, or a boolean.
+
+The section [Functions and Variables](#functions-and-variables) contains a full overview of all available XPath functions and variables.
 
 ---
 # Statement Reference
@@ -389,7 +398,7 @@ Overview of the supported types with their fields:
 - Email
   - `emailaddress`
   - `subject`
-  - `message`
+  - `body`
 - VCard
   - `firstname`
   - `lastname`
@@ -419,7 +428,7 @@ ${=string('emailaddress:john@example.com|subject:Hey John'),QRCodeFrame}
 
 Second example for type Email, using the data from a fictional data file:
 ```
-${=concat('emailaddress:'\,@email\,'|subject:'\,@subject),QRCodeFrame}
+${=concat('emailaddress:',@email,'|subject:',@subject),QRCodeFrame}
 ```
 
 > Particularly for outputting to QRCode of VCard type it is possible that you run into limitations of the XPath processing engine in terms of path length/complexity. The error you get in this case is `XPath invalid`, even if the actual path is valid. A workaround for this is to split setting the QRCode properties via multiple separate `OUTPUT` statements, each with only a few of the fields.
@@ -448,6 +457,8 @@ The following results from the expression are considered a _"false"_ value:
 
 All other results are considered a _"true"_ value.
 
+> This behavior applies in the default `compatible` xpath-mode. In `strict` mode, XPath 1.0 semantics are used instead. Only the following are `false`: a non-existing element or attribute (empty node-set), the number `0` or `NaN`, an empty string `""`, or a boolean `false`. Notably, an existing element or attribute is always `true` regardless of its content - so elements with whitespace-only content, no child elements, or a text value of `"0"`, `"NaN"`, or `"false"` all evaluate to `true`. See the [xpath-mode option](#option-xpath-mode) for details.
+
 ## LOOP (`*`)
 Loop over a collection or numeric value, obtained from the given XPath expression. 
 
@@ -466,14 +477,14 @@ The `LOOP` statement starts an implicit _Block_, which ends either at the end of
 
 When looping over an expression result that returns items from the data, the data context for the child block is automatically set to the current item iterated over. This does not happen when looping over a numeric value. 
 
-The following special attributes are available for expressions of the child block on the current context:
+The following System Variables are available for expressions of the child block on the current context:
 
-| Attribute    | Type    | Meaning                                                   |
-| ------------ | ------- | --------------------------------------------------------- |
-| `@rxc-index` | Number  | The current index, starts at 1                            |
-| `@rxc-count` | Number  | Total number of items in the loop                         |
-| `@rxc-first` | Boolean | True only if the current iteration is over the first item |
-| `@rxc-last`  | Boolean | True only if the current iteration is over the last item  |
+| Variable   | Type    | Meaning                                                   |
+| ---------- | ------- | --------------------------------------------------------- |
+| `$x:index` | Number  | The current index, starts at 1                            |
+| `$x:count` | Number  | Total number of items in the loop                         |
+| `$x:first` | Boolean | True only if the current iteration is over the first item |
+| `$x:last`  | Boolean | True only if the current iteration is over the last item  |
 
 The type of the return type of the specified path specifies what the exact behavior is for `LOOP`. These match the main types for XPath.
 
@@ -507,7 +518,7 @@ Take the following data:
 To loop over the `<product>` elements and output its contents you specify a path that returns these elements exactly. The path to use here is:
 ```
 ${*/data/productlist/product}
-  Product ${=@rxc-index}: ${=.}
+  Product ${=$x:index}: ${=.}
 ${.}
 ```
 
@@ -518,7 +529,7 @@ Note that within the `LOOP` block the context changes to the actual `<product>` 
 To loop the number of times specified in the `<stock>` element (5), you need to make sure to specify a path that returns an actual number and not just the Element `<stock>5</stock>` or its (string) contents `"5"`. The path to use here is: 
 ```
 ${*number(/data/stock)}
-  Number: ${=@rxc-index}
+  Number: ${=$x:index}
 ${.}
 ```
 For numeric loops the context remains the same in the `LOOP` block as it is outside the block.
@@ -588,11 +599,11 @@ Auto Trigger Components are a special type of Function Components that are autom
 
 The name of Auto Trigger Components must start with `on:` followed by the name of the trigger
 
-| Trigger    | Description                                                                                                     |
-| ---------- | --------------------------------------------------------------------------------------------------------------- |
-| `on:start` | Very first item in the template document to be processed.                                                       |
-| `on:end`   | Very last item in the template document to be processed.                                                        |
-| `on:after` | When all items have been succesfully processed. Only a limited set of statements can be executed at this point. |
+| Trigger    | Description                                                                                                      |
+| ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| `on:start` | Very first item in the template document to be processed.                                                        |
+| `on:end`   | Very last item in the template document to be processed.                                                         |
+| `on:after` | When all items have been successfully processed. Only a limited set of statements can be executed at this point. |
 
 Example: `${#on:start}${&somescript.jsx}${.}`
 
@@ -615,7 +626,7 @@ ${@PersonDetails,,frameA}
 ${@fn:PersonDetails}
 ```
 
-Components are defined and named using the `COMPONENT` (`#`) statement. The `PLACE` statement for a particular Component may occur _before_ the Component declaration in the InDesign document structure. Referencing an unknown Component will result in an error.
+Components are defined and named using the `COMPONENT` (`#`) statement. The `PLACE` statement for a particular Component may occur _before_ the Component definition in the InDesign document structure. Referencing an unknown Component will result in an error.
 
 By default, Components inherit the same data context as the current context at the location of the `PLACE` statement. To provide a different context for the Component, use a `,` directly after the Component name and supply an XPath expression.
 
@@ -638,7 +649,7 @@ Ends the current (innermost) _block_ that was started either via `IF`, `ELSE`, `
 **Example**
 ```
 ${.}
-${?IsTrue}${FirstName}${.}
+${?IsTrue}${=FirstName}${.}
 ```
 
 This statement expects no arguments. If there is no block to close at the position of this statement, then an error is given.
@@ -695,7 +706,7 @@ You can report back errors or log custom messages to the Rxindi log using the re
 
 Any other result value than what is listed here above will be ignored.
 
-Arguments three and beyond for the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `params` array property on the `script` object to the script, where the result of the third argument for `SCRIPT` is the first (zeroth index) value on `script.args`. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify parameter arguments without specifying a different target, just use an empty target argument: `<script>,,<args>`.
+Arguments three and beyond for the `SCRIPT` statement are interpreted as XPath and are evaluated against the current data context. Its results are passed as the `args` array property on the `script` object to the script, where the result of the third argument for `SCRIPT` is the first (zeroth index) value on `script.args`. Note that in order to pass literal (constant) text, it must be made into a valid XPath statement first, so pass it as: `string('static text')`. Numeric values can be passed directly. To specify parameter arguments without specifying a different target, just use an empty target argument: `<script>,,<args>`.
 
 **IMPORTANT** Scripts give complete freedom on actions that can be performed within an InDesign document. This provides a lot of freedom and flexibility. However, this also means that Rxindi cannot track the changes made by a script to a document. Certain changes like removal of items or changes to _Notes_ (which are used by Rxindi during processing) may cause statements following a script to fail.
 
@@ -717,20 +728,21 @@ ${!state:Big,MsoA}
 
 Below is a list of all available actions. Note that some actions take an additional action type argument which is separated from the action type using a colon `:`. Do not confuse the action type argument (colon) with statement arguments (separated by a comma) or statement separators in a placeholder (semicolon). Action type names are given here in all lowercase, but they are case-insensitive.
 
-| Action Type       | Description                                                                                          | Target             |
-| ----------------- | ---------------------------------------------------------------------------------------------------- | ------------------ |
-| `hide`            | Hides the target or current frame.                                                                   | Frame (opt)        |
-| `show`            | Shows the target or current frame if hidden.                                                         | Frame (opt)        |
-| `state:<name>`    | Apply the State with the specified name to the target frame, which must be a multi-state object.     | Frame (opt)        |
-| `ostyle:<name>`   | Apply the Object Style with the specified name to the target or current frame.                       | Frame (opt)        |
-| `cstyle:<name>`   | Apply the Character Style with the specified name to the following content or to the target frame.   | Frame (opt)        |
-| `pstyle:<name>`   | Apply the Paragraph Style with the specified name to the current paragraph or to the target frame.   | Frame (opt)        |
-| `tstyle:<name>`   | Apply the Table Style with the specified name to the table which the statement is in.                | Not allowed        |
-| `tcstyle:<name>`  | Apply the Cell Style with the specified name to the cell which the statement is in.                  | Not allowed        |
-| `tcrstyle:<name>` | Apply the Cell Style with the specified name to (all cells of) the row which the statement is in.    | Not allowed        |
-| `tccstyle:<name>` | Apply the Cell Style with the specified name to (all cells of) the column which the statement is in. | Not allowed        |
-| `export:<preset>` | Export the document to PDF or INDD using the give given preset to the specified filename.            | XPath for Filename |
-| `set:<option>`    | Sets a value for a certain template option. The only available option is: `dataroot`.                | Value              |
+| Action Type       | Description                                                                                                                                       | Target / Arg             |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| `hide`            | Hides the target or current frame.                                                                                                                | Frame (opt)              |
+| `show`            | Shows the target or current frame if hidden.                                                                                                      | Frame (opt)              |
+| `state:<name>`    | Apply the State with the specified name to the target frame, which must be a multi-state object.                                                  | Frame (opt)              |
+| `ostyle:<name>`   | Apply the Object Style with the specified name to the target or current frame.                                                                    | Frame (opt)              |
+| `cstyle:<name>`   | Apply the Character Style with the specified name to the following content or to the target frame.                                                | Frame (opt)              |
+| `pstyle:<name>`   | Apply the Paragraph Style with the specified name to the current paragraph or to the target frame.                                                | Frame (opt)              |
+| `tstyle:<name>`   | Apply the Table Style with the specified name to the table which the statement is in.                                                             | Not allowed              |
+| `tcstyle:<name>`  | Apply the Cell Style with the specified name to the cell which the statement is in.                                                               | Not allowed              |
+| `tcrstyle:<name>` | Apply the Cell Style with the specified name to (all cells of) the row which the statement is in.                                                 | Not allowed              |
+| `tccstyle:<name>` | Apply the Cell Style with the specified name to (all cells of) the column which the statement is in.                                              | Not allowed              |
+| `export:<preset>` | Export the document to PDF or INDD using the given preset to the specified filename.                                                              | XPath for Filename (opt) |
+| `set:<option>`    | Sets a value for a certain template option. Available options: `dataroot`, `xpath-mode`, `decimal-separator`, `month-names`, `day-names`, `ampm`. | Value                    |
+| `var:<name>`      | Declares a variable with the given name and optional value.                                                                                       | Value                    |
 
 Note that an `ACTION` by itself is always executed, it has no condition of its own. In order to make it conditional (or run multiple times) place it after an `IF` or `LOOP` statement.
 
@@ -750,7 +762,7 @@ For example: Given the following grouping structure:
   - `StyleGroupB`
     - `MyPStyle`
 
-You would use the following statement to refer to it in a `pstyle` action: `${!pstyle:StyleGroupA/StyleGroupB/MyStyle}`
+You would use the following statement to refer to it in a `pstyle` action: `${!pstyle:StyleGroupA/StyleGroupB/MyPStyle}`
 
 If a group or a style name contains a literal `/` character then you must escape it using a backslash immediately before it. For example, to refer to the style `This/That` use `This\/That` in the style action.  Escaping forward slashes is not necessary (but still allowed) for a style that is specified at top-level (non-grouped) in InDesign though.
 
@@ -760,11 +772,16 @@ The `export` action will export the current document to file. Typically this act
 The file type to export to is defined by the extension of the file name. If no filename or a name without extension is supplied then PDF is assumed. The only supported export types are `pdf` and `indd`.
 
 ### Set action
-The `set` action, changes the value of one of the predefined template options. A `set` action must be specified in the root of a document, meaning that it must be directly in a text frame and cannot be nested in e.g. an `IF` statement. The value for each option may only be set once per template. 
+The `set` action, changes the value of one of the predefined template options. A `set` action must be specified in the root of a document, meaning that it must be directly in a text frame and cannot be nested in e.g. an `IF` statement. The value for each option may only be set once per template and will always be applied at the very start of processing.
 
-| Option     | Default | Description                                                                                             |
-|------------|---------|---------------------------------------------------------------------------------------------------------|
-| `dataroot` | `/*`    | XPath to the effective root element in the Data Source. All other XPaths will be relative to this root. |
+| Option              | Default      | Description                                                                                                                                                     |
+| ------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dataroot`          | `/*`         | XPath to the effective root element in the Data Source. All other XPaths will be relative to this root.                                                         |
+| `xpath-mode`        | `compatible` | XPath evaluation mode. `compatible` uses relaxed boolean coercion for legacy-style truthiness evaluation. `strict` follows the XPath 1.0 specification exactly. |
+| `decimal-separator` | `.,`         | Decimal and grouping separators used by the `format-number()` function. Specified as 1 or 2 characters.                                                         |
+| `month-names`       | English      | 12 month names (January–December order) as separate arguments, used by `format-datetime`/`parse-datetime` for `[M]` named components.                           |
+| `day-names`         | English      | 7 day names (Sunday–Saturday order) as separate arguments, used by `format-datetime`/`parse-datetime` for `[F]` named components.                               |
+| `ampm`              | `am`, `pm`   | 2 AM and PM names as separate arguments, used by `format-datetime`/`parse-datetime` for the `[P]` component.                                                    |
 
 #### Option dataroot
 The `dataroot` option can be set to an XPath statement that resolves to either a single element or a list of elements in the Data Source.
@@ -781,8 +798,105 @@ Example: `${!set:dataroot,/data/sheet[1]}`
  - When using this for an Excel Data Source, the first worksheet would be set as dataroot. Now other statements can use relative paths (e.g. to rows) from this root.
  - Because the data root points to a single element, only this element is used for processing, and a single document is produced.
 
-Example: `${!set:dataroot,/data/sheet[1]/row}` 
+Example: `${!set:dataroot,/data/sheet[1]/row}`
  - When using this for an Excel Data Source, all rows of first worksheet would be used as dataroot. The template is processed for every row in this list.
+
+#### Option xpath-mode
+The `xpath-mode` option controls how XPath expressions are evaluated. The default is `compatible`, which uses relaxed boolean coercion matching the behavior of earlier Rxindi versions, and still offers support for legacy System Attributes (@rxc-...).
+
+In `compatible` mode, a non-empty node-set or string evaluates to `true` only when its value is also truthy - strings like `"false"`, `"0"`, and `"NaN"` evaluate to `false`.
+
+Setting `xpath-mode` to `strict` enables full XPath 1.0 specification semantics:
+ - A non-empty node-set is always `true` (regardless of content), and any non-empty string is `true` (including `"false"`, `"0"`, and `"NaN"`).
+ - When an XPath expression that produces text output selects multiple nodes, only the first node's text is used. In `compatible` mode, the text of all selected nodes is concatenated.
+ - No special `@rxc-*` attributes are added to the data source.
+
+Example: `${!set:xpath-mode,strict}`
+
+#### Option decimal-separator
+The `decimal-separator` option controls the decimal and grouping separators used by the `format-number()` XPath function. By default, `.` is the decimal separator and `,` is the grouping (thousands) separator.
+
+The value is a string of 1 or 2 characters:
+
+- **1 character** — specifies the decimal separator. The grouping separator is chosen automatically: `,` if the decimal is `.`, and `.` otherwise.
+- **2 characters** — specifies both separators in the order `<grouping><decimal>`. The two characters must be different.
+
+Valid characters are any printable character except those reserved by the `format-number()` format string syntax: `#`, `0`, `%`, `‰`, `-`, and `;`. Whitespace characters such as space (` `) and narrow no-break space (`\u202F`) are valid.
+
+Examples:
+
+| Statement                        | Decimal | Grouping | Formatted 1234.5 (pattern `#,##0.00`) |
+| -------------------------------- | ------- | -------- | ------------------------------------- |
+| `${!set:decimal-separator,"."}`  | `.`     | `,`      | `1,234.50`                            |
+| `${!set:decimal-separator,","}`  | `,`     | `.`      | `1.234,50`                            |
+| `${!set:decimal-separator,".,"}` | `,`     | `.`      | `1.234,50`                            |
+| `${!set:decimal-separator," ."}` | `.`     | ` `      | `1 234.50`                            |
+
+Note: when the value contains a comma or space it must be quoted (using double quotes `"`). A single apostrophe `'` also requires quoting: `${!set:decimal-separator,"'."}`
+
+#### Option month-names
+
+The `month-names` option overrides the month names used by `format-datetime` and `parse-datetime` when the `[M]` component appears with a named modifier (`[MNn]`, `[MN]`, `[Mn]`). By default the names are English (January through December). Provide exactly 12 names in January-to-December order, each as a separate argument:
+
+```
+${!set:month-names,Ene,Feb,Mar,Abr,May,Jun,Jul,Ago,Sep,Oct,Nov,Dic}
+```
+
+After setting this option, `format-datetime` will output the custom names and `parse-datetime` will accept them as input (case-insensitively). The case modifiers `N` (uppercase) and `n` (lowercase) still apply to the custom names.
+
+| Statement                                                             | `format-datetime("2025-06-15","[MNn]")` result |
+| --------------------------------------------------------------------- | ---------------------------------------------- |
+| _(no override — English default)_                                     | `June`                                         |
+| `${!set:month-names,Ene,Feb,Mar,Abr,May,Jun,Jul,Ago,Sep,Oct,Nov,Dic}` | `Jun`                                          |
+
+#### Option day-names
+
+The `day-names` option overrides the day-of-week names used by `format-datetime` and `parse-datetime` when the `[F]` component appears with a named modifier (`[FNn]`, `[FN]`, `[Fn]`). By default the names are English (Sunday through Saturday). Provide exactly 7 names in Sunday-to-Saturday order, each as a separate argument:
+
+```
+${!set:day-names,Dom,Lun,Mar,Mié,Jue,Vie,Sáb}
+```
+
+The numeric form `[F]` (ISO day number 1–7) is always culture-neutral and is unaffected by this option.
+
+#### Option ampm
+
+The `ampm` option overrides the AM and PM designators used by `format-datetime` and `parse-datetime` for the `[P]` component. By default the names are `am` and `pm`. Provide exactly 2 names — first AM, then PM:
+
+```
+${!set:ampm,a. m.,p. m.}
+```
+
+The `N` modifier on `[PN]` still produces an uppercased version of the custom names.
+
+You can combine all three locale options in one template:
+
+```
+${!set:month-names,Ene,Feb,Mar,Abr,May,Jun,Jul,Ago,Sep,Oct,Nov,Dic}
+${!set:day-names,Dom,Lun,Mar,Mié,Jue,Vie,Sáb}
+${!set:ampm,a. m.,p. m.}
+```
+
+### Var action
+
+The `var` action assigns the result of an XPath expression to a named variable, which can then be used in any other following statement that take an XPath argument. All variables in Rxindi are global and can be freely used and (re)-assigned at any level in the structure. 
+
+The general variable declaration syntax is `${!var:<name>,<value>}`.
+
+Variable names must adhere to XML "NCName" conventions, which means that they have to start with a letter or underscore and cannot contain spaces or any punctuation besides underscores, hyphens and dots. Casing in variable name is relevant, so "myVar" is considered to be a different variable than "MyVar". 
+
+The value is supplied as an XPath expression and is optional. Depending on the result of the expression, its value will implicitly have one of the following types: `string`, `boolean`, `number` or `node-set`. To force a variable to be of a certain type, you can use the standard `string(..)`, `boolean(..)` and `number(..)` functions. If no value is given then the variable will contain en empty node-set. 
+
+In usage, variables are referred to by a dollar sign, followed immediately by the name of the variable.
+
+Examples (left is declaration, right is usage example):
+```
+${!var:myVar,"Hello World"} -> ${=$myVar}             // Output: "Hello World"
+${!var:a,5}${!var:b,6}      -> ${=$a + $b}            // Output: 11
+${!var:prods,/data/product} -> ${*$prods}${=name}${.} // Output: ABC
+```
+
+Besides user defined variable, Rxindi also has several [System Variables](#system-variables).
 
 
 ## ROWREPEAT (`-`)
@@ -803,7 +917,7 @@ The `ROWREPEAT` statement starts an implicit _Block_ on the entire row, which ca
 
 If the collection has no items or the number is equal to or less than `0` then the row on which the statement is defined is removed. The statement must always be the first statement in the first cell of a table row and a table row can contain only one `ROWREPEAT` statement. It is valid to have multiple rows in the same table with `ROWREPEAT` statements though.
 
-The behavior of `ROWREPEAT` in terms of how the path result is interpreted, as well as the set of special attributes (e.g. `@rxc-index`) that are available is identical to that of `LOOP`. Please refer to its documentation section on this.
+The behavior of `ROWREPEAT` in terms of how the path result is interpreted, as well as the set of System Variables (e.g. `$x:index`) that are available is identical to that of `LOOP`. Please refer to its documentation section on this.
 
 ---
 # Data Source Reference 
@@ -821,9 +935,8 @@ Conversion from JSON, CSV or XLSX to XML can be done in different ways. For sake
 The conversion behavior is controlled by a "Mapping Mode". Rxindi currently offers three:
 - `Default`
 - `Raw`
-- `Classic`
 
-As the name implies, `Default` is the default mapping mode and active when first installing Rxindi. You can change the mapping mode in the Rxindi Panel menu, under `Options` `>` `Mapping Mode`. The selected option is saved and used for all following Processing actions.
+As the name implies, `Default` is the default mapping mode and active when first installing Rxindi. You can change the mapping mode in the Rxindi Options, under `Options` `>` `Mapping Mode`. The selected option is saved and used for all following Processing actions.
 
 Here is an overview on the modes and its effect on the file type:
 
@@ -831,28 +944,19 @@ Here is an overview on the modes and its effect on the file type:
 | ------------ | --------- | ---------------------------- | --------------------------------------------- |
 | `Default`    | _Ignored_ | Map property to element name | Map column header to element name             |
 | `Raw`        | _Ignored_ | Use generic element `p`      | Use generic element `c`, treat header as data |
-| `Classic`    | _Ignored_ | _Map like Rxindi v1.0-1.3_   | _Map like Rxindi v1.0-1.3_                    |
 
-### Column/Property name mapping for Default and Classic
+### Column/Property name mapping for Default
 
-For modes `Default` and `Classic` a best attempt is made to map the Column (XSLX & CSV) and Property (JSON) names onto XML Element names. This is done so that paths for mapping in Rxindi templates become a bit easier to write. For some names, Rxindi has to make some adjustments because the rules for what is allowed in an XML Element name are much stricter than what is allowed in Column & Property names. 
+For mode `Default` a best attempt is made to map the Column (XSLX & CSV) and Property (JSON) names onto XML Element names. This is done so that paths for mapping in Rxindi templates become a bit easier to write. For some names, Rxindi has to make some adjustments because the rules for what is allowed in an XML Element name are much stricter than what is allowed in Column & Property names. 
 
-- Characters in the column/property name that are not allowed in XML:
-  - In `Default` mode: _removed_
-    - Example: `Time Zone` becomes element `TimeZone`
-  - In `Classic` mode: _encoded_
-    - Example: `Time Zone` becomes element `Time_x0020_Zone`  
+- Characters in the column/property name that are not allowed in XML are _removed_:
+  - Example: `Time Zone` becomes element `TimeZone`
 - If the column/property name is empty, only contains disallowed XML characters or starts with `.`, `-`, `xml` or a number, then the element name is either prefixed with or gets as a _fixed_ name:
-  - In `Default` mode: 
-    - JSON: `p`
-    - XSLX/CSV: `c`
-  - In `Classic` mode: 
-    - JSON: `_` (empty & xml prefix, _encoded_ for dot, dash, number)
-    - XSLX/CSV: Spreadsheet-like column character(s), e.g. `AB` (empty & xml prefix, _encoded_ for dot, dash, number)
+  - JSON: `p`
+  - XSLX/CSV: `c`
 - JSON array elements always get a default element name:
-  - In `Default` mode: `p`
-  - In `Classic` mode: `Item`
-- In `Default` (and `Raw`) mode every element (JSON) or column element (XSLX/CSV) has a `name` attribute with the _original_ property/column name. This is not available in `Classic` mode.
+  -  `p`
+- In `Default` (and `Raw`) mode every element (JSON) or column element (XSLX/CSV) has a `name` attribute with the _original_ property/column name.
 
 ## JSON
 
@@ -918,7 +1022,7 @@ To refer to the `name` property of `children`, the following XPaths can be used:
 /data/*[@name="children"]/*[@name="name"]  => "childObject"
 ```
 
-The second path is a bit convoluted for this particular case, but it demonstrates how to access data for property names which would not be valid as XML element names (e.g. ones containing spaces, special characters or starting with numbers) - something which is not possible with `Classic` mode.
+The second path is a bit convoluted for this particular case, but it demonstrates how to access data for property names which would not be valid as XML element names (e.g. ones containing spaces, special characters or starting with numbers).
 
 Possible values for the `type` attribute:
 - `object`
@@ -942,7 +1046,7 @@ The `Raw` mapping mode for JSON is very similar to `Default` mode, the only diff
 - Array item elements are always named `p` and have the array index as `name` attribute
 - The technical name for this mode is `json/3` (it is identified as this on the root element)
 
-#### Resulting XML from JSON with Default Mode
+#### Resulting XML from JSON with Raw Mode
 
 ```xml
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
@@ -979,62 +1083,11 @@ Possible values for the `type` attribute:
 
 Properties with an explicit value of `undefined` in the source JSON are _excluded_ from the XML.
 
-### Classic Mode
-
-The `Classic` mapping mode maps JSON in (mostly) the exact same way as Rxindi did in version 1.0 through 1.3.
-This mode is useful if you have to work with documents that need to remain backwards compatible with older versions, or if you don't want to change the paths to data in existing templates.
-
-For new projects the `Default` mapping mode is recommended.
-
-- Every JSON property and array item becomes an XML element
-- The name of the property becomes the name of the XML element
-- Every property value becomes content of the XML element for the property
-- Every element is annotated with the JSON value type using the `type` attribute
-- The root XML element is a fixed element is always named `Root` 
-- Array item elements are always named `Item`
-
-#### Resulting XML from JSON with Classic Mode
-
-```xml
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<Root type="object">
-  <text type="string">Hello World</text>
-  <children type="object">
-    <name type="string">childObject</name>
-    <emptyText type="string"></emptyText>
-    <data type="null"></data>
-  </children>
-  <hasValue type="boolean">true</hasValue>
-  <amount type="double">1.23</amount>
-  <date type="string">2017-01-03 23:54:18</date>
-  <myItems type="array">
-    <Item type="string">firstItem</Item>
-    <Item type="string">secondItem</Item>
-  </myItems>
-  <_ type="string">empty</_>
-</Root>
-```
-
-To refer to the `name` property of `children`, the following XPath can be used:
-```
-/Root/children/name   => "childObject"
-```
-
-Possible values for the `type` attribute:
-- `object`
-- `array`
-- `double` 
-- `boolean`
-- `string`
-- `null`
-
-Properties with an explicit value of `undefined` in the source JSON are excluded from the XML.
-
 ## CSV
 
 CSV (Comma separated values) data sources are plain text tabular files. They can be written by hand using a plain text editor or can be created and exported with spreadsheet software like Excel or LibreOffice Calc. Many software applications also have export features that produce CSV files. In a CSV file every row denotes a row, with the first line (typically) being the header that defines the columns. Columns are separated by commas, semicolons or tabs.
 
-CSV can be mapped to XML using either the `Default`, `Raw` or `Classic` mapping mode. For `Default` and `Classic` mode the CSV is expected to have a header as first row and the column names are used in the mapping. For `Raw` mode a header is not required, or if present treated like any other row.
+CSV can be mapped to XML using either the `Default` or `Raw` mapping mode. For `Default` mode the CSV is expected to have a header as first row and the column names are used in the mapping. For `Raw` mode a header is not required, or if present treated like any other row.
 
 Example source CSV:
 ```
@@ -1116,7 +1169,7 @@ To refer to the `Location` column of the second row, the following XPaths can be
 /data/row[@index=2]/*[@name="Location"]  => "Amsterdam"
 ```
 
-The third and fourth paths are a bit convoluted for this particular case, it demonstrates how to access the data by CSV row/column index and name attributes, which works even if the column would contain special characters - something which is not possible with `Classic` mode.
+The third and fourth paths are a bit convoluted for this particular case, it demonstrates how to access the data by CSV row/column index and name attributes, which works even if the column would contain special characters.
 
 ### Raw Mode
 
@@ -1186,71 +1239,11 @@ To refer to the `Location` column of the third row, the following XPaths can be 
 
 Note how the row numbers here have shifted compared to `Default` mode. Because the "header" is included as a normal row (row 1), the row numbers for following rows increase by one.
 
-### Classic Mode
-The `Classic` mapping mode maps CSV in the same way as Rxindi did in version 1.0 through 1.3.
-This mode is useful if you have to work with documents that need to remain backwards compatible with older versions, or if you don't want to change the paths to data in existing templates.
-
-For new projects the `Default` or `Raw` mapping mode is recommended.
-
-- The first line in the CSV is expected to be a header with column names
-- Following lines contain rows with values
-- No value type information can be inferred from CSV, so everything is treated as type `string`
-- The root element in the XML is always named `Root` with `type="array"`
-- Every row in the CSV becomes a `Row` XML element with `type="object"`
-- Each column for every row becomes an XML element with the name being the name of the column and the value the cell value
-
-#### Resulting XML from CSV with Classic Mode
-
-```XML
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<Root type="array">
-  <Row type="object">
-    <Location type="string">New York</Location>
-    <Value type="string">2</Value>
-    <C type="string">true</C>
-    <Time_x0020_Zone type="string"></Time_x0020_Zone>
-  </Row>
-  <Row type="object">
-    <Location type="string">Amsterdam</Location>
-    <Value type="string">43</Value>
-    <C type="string"></C>
-    <Time_x0020_Zone type="string">CET</Time_x0020_Zone>
-  </Row>
-  <Row type="object">
-    <Location type="string">Brussels</Location>
-    <Value type="string">4</Value>
-    <C type="string">false</C>
-    <Time_x0020_Zone type="string"></Time_x0020_Zone>
-  </Row>
-  <Row type="object">
-    <Location type="string">Paris</Location>
-    <Value type="string">5</Value>
-    <C type="string"></C>
-    <Time_x0020_Zone type="string"></Time_x0020_Zone>
-  </Row>
-  <Row type="object">
-    <Location type="string">Berlin</Location>
-    <Value type="string">34</Value>
-    <C type="string"></C>
-    <Time_x0020_Zone type="string"></Time_x0020_Zone>
-  </Row>
-</Root>
-```
-
-To refer to the `Location` column of the second row, the following XPath can be used:
-```
-/Root/Row[2]/Location  => "Amsterdam"
-```
-
-Note in the resulting XML how the third column automatically got an element name of `C` (uppercase) which happens to be the default spreadsheet column name for column 3, not to be confused with lowercase `c` which is the standard column element name for `Default` and `Raw` mode.
-
- Also note how in the fourth column, "Time Zone" has element name `Time_x0020_Zone` (with an encoded name)
-
 ## XLSX (Excel)
 
 XLSX (Excel) data sources are spreadsheet documents, they can contain multiple sheets with rows and columns of typed and formatted values.
 
-XLSX can be mapped to XML using either the `Default`, `Raw` or `Classic` mapping mode. For `Default` and `Classic` mode the sheets in the XLSX are expected to have a header as first row and the column names are used in the mapping. For `Raw` mode a header is not required, or if present treated like any other row.
+XLSX can be mapped to XML using either the `Default` or `Raw` mapping mode. For `Default` mode the sheets in the XLSX are expected to have a header as first row and the column names are used in the mapping. For `Raw` mode a header is not required, or if present treated like any other row.
 
 Example source XLSX with two sheets: 
 
@@ -1341,7 +1334,7 @@ To refer to the `Location` column of the second row, the following XPaths can be
 /data/sheet[@index=1]/row[@index=2]/*[@index=1]  => "Amsterdam"
 ```
 
-The second and third paths demonstrate how to access the data by sheet/row/column index and name attributes, which works even if the sheet name or column name would contain special characters (e.g. "Time Zone") - something that is not possible with `Classic` mode.
+The second and third paths demonstrate how to access the data by sheet/row/column index and name attributes, which works even if the sheet name or column name would contain special characters (e.g. "Time Zone").
 
 Possible values for the `type` attribute on the column element:
 - `number` 
@@ -1428,90 +1421,468 @@ Possible values for the `type` attribute on the column element:
 - `string`
 - `null`
 
-### Classic Mode
-
-The `Classic` mapping mode maps XLSX in the same way as Rxindi did in version 1.0 through 1.3.
-This mode is useful if you have to work with documents that need to remain backwards compatible with older versions, or if you don't want to change the paths to data in existing templates.
-
-For new projects the `Default` or `Raw` mapping mode is recommended.
-
-- The first row (of every sheet) is expected to contain column names
-- Following lines contain rows with values
-- If cells are typed, this type information is included with the `type` attribute at column level
-- The root element in the XML is always `Root` with `type=array`
-- Every sheet in the XLSX becomes a `Sheet` XML element with `type=array`
-- Every row in the XLSX becomes a `Row` XML element with `type=object`
-- Each column with value for every row becomes an XML Element with the name being the name of the column and the value the cell value
-
-#### Resulting XML from XLSX with Classic Mode
-
-```XML
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<Root type="array">
-  <Sheet type="array">
-    <Row type="object">
-      <Location type="string">New York</Location>
-      <Value type="double">2</Value>
-      <C type="double">TRUE</C>
-      <Time_x0020_Zone type="null"></Time_x0020_Zone>
-    </Row>
-    <Row type="object">
-      <Location type="string">Amsterdam</Location>
-      <Value type="double">43</Value>
-      <C type="null"></C>
-      <Time_x0020_Zone type="string">CET</Time_x0020_Zone>
-    </Row>
-    <Row type="object">
-      <Location type="string">Brussels</Location>
-      <Value type="double">4</Value>
-      <C type="double">FALSE</C>
-      <Time_x0020_Zone type="null"></Time_x0020_Zone>
-    </Row>
-    <Row type="object">
-      <Location type="string">Paris</Location>
-      <Value type="double">5</Value>
-      <C type="null"></C>
-      <Time_x0020_Zone type="null"></Time_x0020_Zone>
-    </Row>
-    <Row type="object">
-      <Location type="string">Berlin</Location>
-      <Value type="double">34</Value>
-      <C type="null"></C>
-      <Time_x0020_Zone type="null"></Time_x0020_Zone>
-    </Row>
-  </Sheet>
-  <Sheet type="array" />
-</Root>
-```
-
-To refer to the `Location` column of the second row, the following XPath can be used:
-```
-/Root/Sheet[1]/Row[2]/Location
-```
-
-Possible values for the `type` attribute on the column element:
-- `double` 
-- `integer`
-- `boolean`
-- `datetime`
-- `duration`
-- `string`
-- `null`
-
 ## Line Break Handling 
 
 The `OUTPUT` statement treats line break characters in text selected in the data source in the following way:
 
-| Character                | Hex    | Behavior                            |
-| ------------------------ | ------ | ----------------------------------- |
-| Linefeed (LF)            | 0x0A   | Forced Line Break within paragraph  |
-| Line Separator (LS)      | 0x2028 | Forced Line Break within paragraph  |
-| Carriage Return (CR)     | 0x0D   | Paragraph Return                    |
-| Paragraph Separator (PS) | 0x2029 | Paragraph Return                    |
+| Character                | Hex    | Behavior                           |
+| ------------------------ | ------ | ---------------------------------- |
+| Linefeed (LF)            | 0x0A   | Forced Line Break within paragraph |
+| Line Separator (LS)      | 0x2028 | Forced Line Break within paragraph |
+| Carriage Return (CR)     | 0x0D   | Paragraph Return                   |
+| Paragraph Separator (PS) | 0x2029 | Paragraph Return                   |
 
 The combination or CR directly followed by LF, which is a common line separator combination on Windows, will result in just a _single_ Paragraph Return.
 
 Note that this behavior applies from Rxindi v2.0 and up. Rxindi Classic would treat all line break characters a Forced Line Break. This behavior is retained when processing a document in v1.5 Compatibility mode.
 
 ---
-Copyright ® 2020-2026 Rxcle. All Rights Reserved.
+# Functions and Variables
+
+This section lists all functions and variables that can be used in statement arguments of the type XPath.
+
+Functions are called using its predefined name followed by parenthesis and in between them (depending on the function) arguments separated by commas. For example this outputs "Hello World": `${=concat('Hello', 'World')}`.
+
+Variables start with a dollar sign, followed by the name of the variable. The following with output info about Rxindi: `${=$x:about}`
+
+By XPath convention, both functions and variables use, so-called "kebab-case", where words are written in lowercase and separated by hyphens.
+
+## XPath Functions
+
+Rxindi supports all functions that are part of the official XPath 1.0 specification. Additionally, Rxindi offers a significant set of extended functions that closely mirror those of XPath 2.0 and other XML related standards. Extended functions are indicated in the list with `†`. 
+
+In usage with Rxindi there is no practical difference between standard and extended functions, but this difference may be significant if external tools or references are used to aid with the creation of XPath expressions.
+
+### Node-set Functions
+
+| Function                              | Returns  | Description                                                                       |
+| ------------------------------------- | -------- | --------------------------------------------------------------------------------- |
+| `count(node-set)`                     | Number   | Number of nodes in the given node-set                                             |
+| `id(object)`                          | Node Set | Selects elements by their unique ID                                               |
+| `last()`                              | Number   | Index of the last node in the current context                                     |
+| [`list(arg, arg*)`](#function-list) † | Node Set | Creates a custom list as a node-set from the given arguments _(Rxindi extension)_ |
+| `local-name(node-set?)`               | String   | Local part of the name of the first node                                          |
+| `name(node-set?)`                     | String   | Expanded name of the first node                                                   |
+| `namespace-uri(node-set?)`            | String   | Namespace URI of the first node                                                   |
+| `position()`                          | Number   | Index of the current node in the context                                          |
+
+### String Functions
+
+| Function                                             | Returns  | Description                                                                       |
+| ---------------------------------------------------- | -------- | --------------------------------------------------------------------------------- |
+| `concat(str, str, str*)`                             | String   | Concatenates two or more strings                                                  |
+| `contains(str, str)`                                 | Boolean  | Whether the first string contains the second                                      |
+| `ends-with(str, str)` †                              | Boolean  | Whether the first string ends with the second _(XPath 2.0)_                       |
+| `lower-case(str)` †                                  | String   | Converts a string to lowercase _(XPath 2.0)_                                      |
+| `normalize-space(str?)`                              | String   | Strips leading/trailing whitespace and collapses internal whitespace              |
+| `starts-with(str, str)`                              | Boolean  | Whether the first string starts with the second                                   |
+| `string(object?)`                                    | String   | Converts an object to its string value                                            |
+| `string-join(node-set, str)` †                       | String   | Joins the string values of all nodes using the given separator _(XPath 2.0)_      |
+| `string-length(str?)`                                | Number   | Number of characters in the string                                                |
+| [`string-split(str, str)`](#function-string-split) † | Node Set | Splits a string by a separator into a node-set of text nodes _(Rxindi extension)_ |
+| `substring(str, num, num?)`                          | String   | Substring starting at position, with optional length                              |
+| `substring-after(str, str)`                          | String   | Part of the first string after the first occurrence of the second                 |
+| `substring-before(str, str)`                         | String   | Part of the first string before the first occurrence of the second                |
+| `translate(str, str, str)`                           | String   | Replaces characters in the first string based on a character map                  |
+| `upper-case(str)` †                                  | String   | Converts a string to uppercase _(XPath 2.0)_                                      |
+
+### Boolean Functions
+
+| Function                         | Returns | Description                                                                    |
+| -------------------------------- | ------- | ------------------------------------------------------------------------------ |
+| `boolean(object)`                | Boolean | Converts an object to a boolean                                                |
+| `choose(bool, object, object)` † | object  | Returns second or third argument based on whether first is true _(XForms 1.1)_ |
+| `false()`                        | Boolean | Returns false                                                                  |
+| `lang(string)`                   | Boolean | Whether the context node's language matches the given language code            |
+| `not(boolean)`                   | Boolean | Negates a boolean value                                                        |
+| `true()`                         | Boolean | Returns true                                                                   |
+
+### Number Functions
+
+| Function                                                                   | Returns | Description                                                             |
+| -------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------- |
+| `abs(number)` †                                                            | Number  | Absolute value of the argument _(XPath 2.0)_                            |
+| `ceiling(number)`                                                          | Number  | Smallest integer not less than the argument                             |
+| `floor(number)`                                                            | Number  | Largest integer not greater than the argument                           |
+| [`format-number(number, format-str, dec-sep?)`](#function-format-number) † | String  | Formats a number using the format given as second argument _(XSLT 1.0)_ |
+| `number(object?)`                                                          | Number  | Converts an object to a number                                          |
+| [`parse-number(string, dec-sep?)`](#function-parse-number) †               | Number  | Parses a localized number string back to a number _(Rxindi extension)_  |
+| `round(number)`                                                            | Number  | Nearest integer to the argument                                         |
+| `round-half-to-even(number, int?)` †                                       | Number  | Rounds to given decimal precision using banker's rounding _(XPath 2.0)_ |
+| `sum(node-set)`                                                            | Number  | Sum of the numeric values of all nodes in the set                       |
+
+### Date and Time Functions
+
+| Function                                                          | Returns | Description                                                                                            |
+| ----------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
+| `current-date()` †                                                | String  | Current date as an ISO 8601 string _(XPath 2.0)_                                                       |
+| `current-datetime()` †                                            | String  | Current date and time as an ISO 8601 string - alias `current-dateTime()` _(XPath 2.0)_                 |
+| `current-time()` †                                                | String  | Current time as an ISO 8601 string (`HH:MM:SS`) _(XPath 2.0)_                                          |
+| `day-from-date(str)` †                                            | Number  | Extracts the day (1–31) from an ISO 8601 date or date-time string _(XPath 2.0)_                        |
+| [`format-datetime(str, format-str)`](#function-format-datetime) † | String  | Formats an ISO 8601 date, time, or date-time string using a format string _(XSLT 2.0)_                 |
+| `hours-from-time(str)` †                                          | Number  | Extracts the hours (0–23) from an ISO 8601 time or date-time string _(XPath 2.0)_                      |
+| `minutes-from-time(str)` †                                        | Number  | Extracts the minutes (0–59) from an ISO 8601 time or date-time string _(XPath 2.0)_                    |
+| `month-from-date(str)` †                                          | Number  | Extracts the month (1–12) from an ISO 8601 date or date-time string _(XPath 2.0)_                      |
+| [`parse-datetime(str, format-str)`](#function-parse-datetime) †   | String  | Parses a formatted date/time string into an ISO 8601 string using a format string _(Rxindi extension)_ |
+| `seconds-from-time(str)` †                                        | Number  | Extracts the seconds (0–59) from an ISO 8601 time or date-time string _(XPath 2.0)_                    |
+| `year-from-date(str)` †                                           | Number  | Extracts the year from an ISO 8601 date or date-time string _(XPath 2.0)_                              |
+
+> **Note:** Rxindi has no dedicated "date" type; Dates are represented as an ISO 8601 string (`YYYY-MM-DDTHH:MM:SS`).
+
+### Function details
+
+#### Function list
+
+`list(arg, arg*)` builds a custom list from one or more values. Every argument is evaluated and the text value of each result becomes one item in the list, which is returned as a node-set. This node-set can then be used like any other node-set: You can loop over it, index into it, assign it to a variable, or pass it to any other XPath function that accepts a node-set.
+
+**Assigning to a variable for re-use**
+
+Save the list to a [variable](#var-action) when you need to refer to it in multiple places, or when you want to pick out a specific item by position using `[n]`:
+
+```
+${!var:sizes, list('Small', 'Medium', 'Large')}
+
+Default: ${=$sizes[2]}
+
+${*$sizes}Available size: ${=.}${.}
+```
+
+Output for the loop: `Available size: Small`, `Available size: Medium`, `Available size: Large`.
+
+**Looping directly over a list**
+
+Pass the result directly to `LOOP` or `ROWREPEAT` to repeat content once per item. Inside the loop, `.` refers to the current item:
+
+```
+${*list('Red', 'Green', 'Blue')}
+  Color: ${=.}
+${.}
+```
+
+You can also collect individual data values from different paths into one list to loop over:
+
+```
+${*list(product/color, product/material, product/finish)}
+  Attribute: ${=.}
+${.}
+```
+
+> Note that every argument for the `list` function will produce a single simple (flattened) entry in the resulting node-set. This function does not support multi-dimensional (nested) lists.
+
+**Using with other XPath functions**
+
+Because `list` returns a node-set, its result works as input to any function that accepts a node-set — for example, joining the items into a single string, or counting them:
+
+```
+${=string-join(list('Mon', 'Wed', 'Fri'), ', ')}
+```
+
+Output: `Mon, Wed, Fri`
+
+```
+${=count(list('a', 'b', 'c'))}
+```
+
+Output: `3`
+
+| Expression                                         | Result                       |
+| -------------------------------------------------- | ---------------------------- |
+| `list('A', 'B', 'C')`                              | Node-set of 3 items: A, B, C |
+| `$sizes[2]` _(where `$sizes = list('S','M','L')`)_ | `M`                          |
+| `count(list('x', 'y'))`                            | `2`                          |
+| `string-join(list('Mon', 'Wed', 'Fri'), ', ')`     | `Mon, Wed, Fri`              |
+
+#### Function string-split
+
+`string-split(input, separator)` splits a string by a literal separator and returns a list of text nodes — one node per token. Empty tokens produced by consecutive or leading/trailing separators are discarded. The result is the same node type as `list()` and can be used anywhere a node-set is accepted: looping, indexing, variables, and other XPath functions.
+
+**Splitting a delimited string into a loop**
+
+```
+${*string-split(product/sizes, ',')}
+  Size: ${=.}
+${.}
+```
+
+If `product/sizes` contains `S,M,L`, the loop outputs `Size: S`, `Size: M`, `Size: L`.
+
+**Picking a specific token by position**
+
+```
+${=string-split('Mon,Tue,Wed,Thu,Fri', ',')[3]}
+```
+
+Output: `Wed`
+
+**Assigning to a variable for re-use**
+
+```
+${!var:tags, string-split(article/tags, ';')}
+
+Tag count: ${=count($tags)}
+
+${*$tags}— ${=.}
+${.}
+```
+
+**Combining with string-join**
+
+```
+${=string-join(string-split(row/csv-field, ','), ' / ')}
+```
+
+Splits the field on commas and re-joins with ` / ` as separator.
+
+| Expression                            | Result                                            |
+| ------------------------------------- | ------------------------------------------------- |
+| `string-split('a,b,c', ',')`          | Node-set of 3 items: a, b, c                      |
+| `string-split('a,,b', ',')`           | Node-set of 2 items: a, b _(empty token skipped)_ |
+| `string-split('hello world', ' ')[2]` | `world`                                           |
+| `count(string-split('x;y;z', ';'))`   | `3`                                               |
+
+#### Function format-number
+
+`format-number(number, format-str, dec-sep?)` formats a number as a string according to a format pattern. The pattern syntax is identical to the one used in Excel custom number formats and XSLT 1.0's `format-number()`.
+
+The `format-str` is a format string composed of the following characters (using the default `.` decimal / `,` grouping separators):
+
+| Character | Meaning                                                                                       |
+| --------- | --------------------------------------------------------------------------------------------- |
+| `0`       | Digit placeholder — always outputs a digit, outputs `0` if no digit is present                |
+| `#`       | Digit placeholder — outputs a digit only if one is present, suppresses leading/trailing zeros |
+| `.`       | Decimal separator — marks where the decimal point appears in the output                       |
+| `,`       | Grouping separator — when placed between digit placeholders, inserts a thousands separator    |
+| `%`       | Percent — multiplies the number by 100 and appends `%`                                        |
+| `‰`       | Per-mille — multiplies the number by 1000 and appends `‰`                                     |
+| `-`       | Minus sign in the negative sub-pattern                                                        |
+| `;`       | Sub-pattern separator — separates positive and negative sub-patterns                          |
+| Any other | Literal character — output as-is (e.g. currency symbols, spaces)                              |
+
+The format string may contain an optional negative sub-pattern after a `;`. If omitted, negative numbers are formatted like positive ones with a leading `-`.
+
+Examples (default separators):
+
+| Expression                            | Result        |
+| ------------------------------------- | ------------- |
+| `format-number(1234.5, "#,##0.00")`   | `1,234.50`    |
+| `format-number(0.075, "0.00%")`       | `7.50%`       |
+| `format-number(-42, "#,##0;(#,##0)")` | `(42)`        |
+| `format-number(1234567, "$ #,##0")`   | `$ 1,234,567` |
+
+The decimal and grouping separator characters used in the output (and in the format string itself) reflect the current `decimal-separator` setting. Use `${!set:decimal-separator,...}` to change them for the whole template — see [Option decimal-separator](#option-decimal-separator).
+
+For example, to output European-style numbers (comma as decimal, dot as grouping) for every number in the template:
+
+```
+${!set:decimal-separator,","}
+${=format-number(Price, "#.##0,00")}
+```
+
+The `decimal-separator` option applies globally and only needs to be set once per document.
+
+The optional `dec-sep` argument overrides the separators for a single call, using the same format as the `decimal-separator` SET option:
+
+- **1 character** — the decimal separator; grouping separator is derived automatically (`,` if decimal is `.`, otherwise `.`)
+- **2 characters** — first character is the grouping separator, second is the decimal separator
+
+If `dec-sep` is invalid (empty, more than 2 characters, contains a forbidden character, or both characters are the same), the function returns `"NaN"`.
+
+Example — format a single number in European style without changing the global setting:
+
+| Expression                                | Result     |
+| ----------------------------------------- | ---------- |
+| `format-number(1234.5, "#.##0,00", ",")`  | `1.234,50` |
+| `format-number(1234.5, "#,##0.00", ".")`  | `1,234.50` |
+| `format-number(1234.5, "#.##0,00", ".,")` | `1.234,50` |
+
+#### Function parse-number
+
+`parse-number(string, dec-sep?)` parses a localized number string into a number. By default, the same decimal and grouping separator characters are used for parsing as for formatting. 
+
+The primary use-case for this function is reading numbers from the source data that are in a non-English numeric format. For instance, numbers that use a comma rather than a dot for the decimal separator, or numbers that use an alternative thousands-grouping separator. For numbers that are already in English format, the regular `number(..)` function can (also) be used.
+
+The optional `dec-sep` argument overrides the separators for this call only, using the same format as the `decimal-separator` SET option:
+
+- **1 character** — the decimal separator; grouping separator is derived automatically (`,` if decimal is `.`, otherwise `.`)
+- **2 characters** — first character is the grouping separator, second is the decimal separator
+
+If `dec-sep` is omitted, the separators from the current `decimal-separator` setting are used (default: `.` decimal, `,` grouping).
+
+If `dec-sep` is invalid (empty, more than 2 characters, contains a forbidden character, or both characters are the same), the function returns `NaN`.
+
+> **Note:** `parse-number` expects a clean numeric string — digits, separators, an optional leading sign (`+` or `-`), and nothing else. It cannot handle prefixes or suffixes such as currency symbols or other surrounding text. Passing a string like `"$ 1,234.50"` or `"EUR 42"` will return `NaN`. Strip any surrounding text before passing the value to this function.
+
+Examples (default separators):
+
+| Expression                       | Result   |
+| -------------------------------- | -------- |
+| `parse-number('1,234.50')`       | `1234.5` |
+| `parse-number('-42')`            | `-42`    |
+| `parse-number('.06')`            | `0.06`   |
+| `parse-number('+2.4')`           | `2.4`    |
+| `parse-number('abc')`            | `NaN`    |
+| `parse-number('1234,50', ',')`   | `1234.5` |
+| `parse-number('1.234,50', '.,')` | `1234.5` |
+
+#### Function format-datetime
+
+`format-datetime(str, format-str)` formats an ISO 8601 date, time, or date-time string as a custom string. It accepts any ISO 8601 input and uses whichever components are present — date components (`[Y]`, `[M]`, `[D]`, `[F]`), time components (`[H]`, `[h]`, `[m]`, `[s]`, `[P]`), or both. Returns `""` for empty input.
+
+The `format-str` is composed of literal text and component markers in square brackets. Literal text is passed through as-is. To include a literal `[` or `]`, double it: `[[` → `[`, `]]` → `]`.
+
+**Component markers:**
+
+| Marker | Component    | Default      | Notes                                                                                                                   |
+| ------ | ------------ | ------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `[Y]`  | Year         | Numeric      | Use `[Y0001]` for 4-digit zero-padded output                                                                            |
+| `[M]`  | Month        | Numeric      | `[MNn]`, `[MN]`, `[Mn]` for month names (English by default; override with `month-names` SET option)                    |
+| `[D]`  | Day of month | Numeric      | Use `[D01]` for 2-digit zero-padded output                                                                              |
+| `[H]`  | Hour (0–23)  | Numeric      | Use `[H01]` for 2-digit zero-padded output                                                                              |
+| `[h]`  | Hour (1–12)  | Numeric      |                                                                                                                         |
+| `[m]`  | Minute       | Numeric      | Use `[m01]` for 2-digit zero-padded output                                                                              |
+| `[s]`  | Second       | Numeric      |                                                                                                                         |
+| `[P]`  | AM/PM        | `am` / `pm`  | `[PN]` → uppercased; override names with `ampm` SET option                                                              |
+| `[F]`  | Day of week  | English name | `[FN]` / `[Fn]` for UPPER / lower case; `[F1]` for ISO number (1=Mon…7=Sun); override names with `day-names` SET option |
+
+**Numeric width modifier:** The modifier after the component letter controls zero-padding. `[D]` or `[D1]` → no leading zero. `[D01]` → at least 2 digits. `[Y0001]` → at least 4 digits.
+
+**Named modifier (for `[M]` and `[F]`):** A modifier containing `N` or `n` selects a name. `Nn` or absent → Title Case. `N` → UPPERCASE. `n` → lowercase. `[M]` without a named modifier → numeric.
+
+Examples:
+
+| Expression                                                                   | Result                 |
+| ---------------------------------------------------------------------------- | ---------------------- |
+| `format-datetime("2025-03-28", "[Y0001]-[M01]-[D01]")`                       | `2025-03-28`           |
+| `format-datetime("2025-03-28", "[D] [MNn] [Y0001]")`                         | `28 March 2025`        |
+| `format-datetime("2025-03-28", "[FNn] [D01]/[M01]/[Y0001]")`                 | `Friday 28/03/2025`    |
+| `format-datetime("2025-03-05", "[M]/[D]/[Y0001]")`                           | `3/5/2025`             |
+| `format-datetime("14:05:09", "[H01]:[m01]:[s01]")`                           | `14:05:09`             |
+| `format-datetime("14:05:09", "[h]:[m01] [PN]")`                              | `2:05 PM`              |
+| `format-datetime("2025-03-28T14:05:09", "[D01] [MNn] [Y0001], [H01]:[m01]")` | `28 March 2025, 14:05` |
+
+> **Note:** Month names, day-of-week names, and AM/PM designators default to English. Use the `month-names`, `day-names`, and `ampm` [SET options](#option-month-names) to override them for the whole template.
+
+> **Note:** `format-dateTime` (with an uppercase T) is an alias for `format-datetime` and works identically.
+
+#### Function parse-datetime
+
+`parse-datetime(str, format-str)` is the inverse of `format-datetime`. It parses a formatted date, time, or date-time string back into an ISO 8601 string, using the same format string syntax. Returns `""` if the input is empty or the literal separators in the format do not match the input.
+
+The format string uses the same component markers as `format-datetime` (see table above). Literal text between markers must match the input exactly. Component values not present in the format default to `0` (or `1` for month and day).
+
+The output type is determined by which components appear in the format:
+- Date components only (`[Y]`, `[M]`, `[D]`) → `YYYY-MM-DD`
+- Time components only (`[H]`/`[h]`, `[m]`, `[s]`) → `HH:MM:SS`
+- Both → `YYYY-MM-DDTHH:MM:SS`
+
+When `[h]` (12-hour) is used together with `[P]` (AM/PM), the combination is converted to a 24-hour value. Month names (`[MNn]`, `[MN]`, `[Mn]`) and day-of-week names (`[F]`) are matched case-insensitively. Day-of-week is parsed but does not affect the output.
+
+Examples:
+
+| Expression                                                                       | Result                |
+| -------------------------------------------------------------------------------- | --------------------- |
+| `parse-datetime("2025-03-28", "[Y0001]-[M01]-[D01]")`                            | `2025-03-28`          |
+| `parse-datetime("28 March 2025", "[D] [MNn] [Y0001]")`                           | `2025-03-28`          |
+| `parse-datetime("3/5/2025", "[M]/[D]/[Y0001]")`                                  | `2025-03-05`          |
+| `parse-datetime("14:05:09", "[H01]:[m01]:[s01]")`                                | `14:05:09`            |
+| `parse-datetime("2:05 PM", "[h]:[m01] [PN]")`                                    | `14:05:00`            |
+| `parse-datetime("2025-03-28T14:05:09", "[Y0001]-[M01]-[D01]T[H01]:[m01]:[s01]")` | `2025-03-28T14:05:09` |
+
+> **Note:** Month names, day-of-week names, and AM/PM designators default to English. Use the `month-names`, `day-names`, and `ampm` [SET options](#option-month-names) to override them for the whole template.
+
+> **Note:** `parse-dateTime` (with an uppercase T) is an alias for `parse-datetime` and works identically.
+
+
+## System Variables
+
+Rxindi provides a set of useful system variables, which can be used in XPath expressions. These variables are read-only and automatically set and updated by Rxindi. All system variables start with the prefix `$x:`. The following variables are available:
+
+| Variable            | Type     | Description                                                                                              |
+| ------------------- | -------- | -------------------------------------------------------------------------------------------------------- |
+| `$x:about`          | String   | Rxindi version and copyright information                                                                 |
+| `$x:data-source`    | String   | Full path of the currently used data source                                                              |
+| `$x:parameter`      | String   | Custom processing parameter                                                                              |
+| `$x:compat-version` | Number   | Compatibility version, expressed as (Major * 100) + Minor, e.g. number 105 for v1.5                      |
+| `$x:context`        | Node set | Current context in the data source, this is always a node set wit a single item                          |
+| `$x:parent-context` | Node set | Previous context in the data source, after the current context changed, e.g. with `LOOP`                 |
+| `$x:root-context`   | Node set | Root context, typically the root of the data source, or what is selected with `${!set:dataroot,...}`     |
+| `$x:index`          | Number   | Current index in a `LOOP` or `ROWREPEAT`, starts at 1                                                    |
+| `$x:count`          | Number   | Total items in a `LOOP` or `ROWREPEAT`                                                                   |
+| `$x:first`          | Boolean  | True when the current item is the first item (same as `$x:index = 1`)                                    |
+| `$x:last`           | Boolean  | True when the current item is the last item (same as `$x:index = $x:count`)                              |
+| `$x:record-index`   | Number   | Current record index, starts at 1                                                                        |
+| `$x:record-count`   | Number   | Total records, will only be more than 1 if `${!set:dataroot,...}` selects a Node set with multiple items |
+| `$x:record-first`   | Boolean  | True when the current record is the first record (same as `$x:record-index = 1`)                         |
+| `$x:record-last`    | Boolean  | True when the current record is the last record (same as `$x:record-index = $x:record-count`)            |
+
+## Character Constants
+
+Rxindi provides a set of read-only character constants using the `$c:` prefix. These are useful for inserting special or non-printable characters into output without needing to embed invisible glyphs in the template.
+
+| Constant    | Unicode | InDesign Character       |
+| ----------- | ------- | ------------------------ |
+| `$c:tab`    | U+0009  | Tab                      |
+| `$c:lf`     | U+000A  | Forced Line Break        |
+| `$c:cr`     | U+000D  | Paragraph Break          |
+| `$c:shy`    | U+00AD  | Soft Hyphen              |
+| `$c:nbhy`   | U+2011  | Nonbreaking Hyphen       |
+| `$c:nbsp`   | U+00A0  | Nonbreaking Space        |
+| `$c:nnbsp`  | U+202F  | Narrow Nonbreaking Space |
+| `$c:ensp`   | U+2002  | En Space                 |
+| `$c:emsp`   | U+2003  | Em Space                 |
+| `$c:thrsp`  | U+2004  | Third Space              |
+| `$c:qsp`    | U+2005  | Quarter Space            |
+| `$c:sixsp`  | U+2006  | Sixth Space              |
+| `$c:figsp`  | U+2007  | Figure Space             |
+| `$c:thinsp` | U+2009  | Thin Space               |
+| `$c:hairsp` | U+200A  | Hair Space               |
+| `$c:zwsp`   | U+200B  | Discretionary Line Break |
+| `$c:ndash`  | U+2013  | En Dash                  |
+| `$c:mdash`  | U+2014  | Em Dash                  |
+| `$c:bull`   | U+2022  | Bullet                   |
+| `$c:hellip` | U+2026  | Ellipsis                 |
+| `$c:copy`   | U+00A9  | Copyright                |
+| `$c:reg`    | U+00AE  | Registered               |
+| `$c:trade`  | U+2122  | Trademark                |
+| `$c:deg`    | U+00B0  | Degree                   |
+
+**Examples**
+
+Insert a nonbreaking space between a number and its unit:
+
+```
+${=number/.}${=$c:nbsp}${=unit/.}
+```
+
+Use an em dash as a separator:
+
+```
+${=title} ${=$c:mdash} ${=subtitle}
+```
+
+Concatenate with `concat()`:
+
+```
+${=concat(first-name, $c:nbsp, last-name)}
+```
+
+## System Attributes
+
+Previous versions of Rxindi did not offer XPath variables but special System Attributes. These are still supported for backward compatibility, but it is HIGHLY recommended to migrate to the Rxindi System Variables instead as these offer many benefits, such as strong typing and not being tied to specific contexts.
+
+> In `xpath-mode` `strict` System Attributes are NOT available.
+
+> System Attributes are **deprecated** and will be removed in a future version (for all modes).
+
+| System Attribute    | Migrate to        |
+| ------------------- | ----------------- |
+| `@rxc-parameter`    | `$x:parameter`    |
+| `@rxc-index`        | `$x:index`        |
+| `@rxc-count`        | `$x:count`        |
+| `@rxc-first`        | `$x:first`        |
+| `@rxc-last`         | `$x:last`         |
+| `@rxc-record-index` | `$x:record-index` |
+| `@rxc-record-count` | `$x:record-count` |
+
+---
+Copyright © 2020-2026 Rxcle. All Rights Reserved.

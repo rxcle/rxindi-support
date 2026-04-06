@@ -1,31 +1,140 @@
 # Rxindi Release Notes
 
-**Version 2.1** | _2026-01-04_
+**Version 2.2** | _2026-04-04_
 
-- Custom data root | [details](#custom-data-root)
-- Multi-record processing | [details](#multi-record-processing)
-- Simplified literal strings for XPaths | [details](#simplified-literal-strings-for-xpaths)
+- Variables | [details](#variables)
+- Many new expression functions (50 in total) | [details](#functions)
+- Number formatting and parsing | [details](#number-formatting)
+- Date formatting and parsing | [details](#date-formatting)
+- System Variables replace System Attributes | [details](#system-variables)
+- Character constants for breaks and more | [details](#character-constants)
+- Strict XPath mode | [details](#xpath-mode)
+- Support for XML namespaces | [details](#xml-namespaces)
+- Extended pre-process validation | [details](#extended-validation)
+- Commas and semicolons no longer need an escape | [details](#no-escapes)
+- Fix optional filename for Export action
+- Mapping mode Classic has been removed
+- Legacy scriptArgs removed for JSX
 
 [Previous releases](#previous-releases)
 
 ## Changes in detail
 
-### Custom Data Root
+### Variables
 
-Path arguments for statements in the template refer to data in the Data Source and are relative to the "data root" element. By default this is the XML root element, which is `/data` on JSON, CSV and XSLX Data Sources. 
+You can now declare, update, and use named variables in your document templates. Declare a new, or update an existing variable using the new `var` action. For example: `${!var:myVar,"Hello!"}`. The value of a variable can be set to the result of any expression and are type-aware. Besides strings, numbers and booleans, you can also assign a set of elements from the data source to them.
 
-Starting with this release, any element in the Data Source can be selected as the data root. This is done using the new `SET` `ACTION` and the `dataroot` option, for which you can specify an XPath. For example `${!set:dataroot,/Custom/MyData}`; This sets the data root to the `MyData` child element and all other paths in the template will be relative to that.
+Declared variables can then be used in any argument that takes a path expression using a dollar-sign followed directly by the variable name, e.g. `$myVar`. All variables are global for the document, so you can declare/update a variable in one frame and use it from another.
 
-### Multi-record processing
+The combination of variables and powerful new [functions](#functions) open up a whole new level of what can be achieved directly from within InDesign itself, without having to resort to custom scripts.
 
-With Rxindi v2.1 you can now process the same template multiple times, using the records/rows from the same Data Source. When used in combination with the `EXPORT` `ACTION`, this allows for easy batch processing of many documents in one go. This functionality is implicitly enabled by specifying an XPath that results in multiple elements for the `dataroot`. For example, for CSV Data Sources, the following statement would cause the template document to be processed for every row in the CSV: `${!set:dataroot,/data/row}`.
+### Functions
 
-### Simplified literal strings for XPaths
+Rxindi now supports 50 functions that can be used in any argument that takes an expression path. This now includes full XPath 1.0 compliance, and many additional functions for working with strings, numbers, node-sets and dates. Some highlights are:
 
-For any statement that takes an XPath as argument, e.g. `OUTPUT` and `EXPORT` `ACTION`, you can now just use double or single quoted strings to specify a literal text value. Previously you would have to use the XPath function `string("...")` - which is also still valid. This means that e.g. `${=string("Hello World")}` can now be written as `${="Hello World"}`
+- `parse-number` / `format-number` and `parse-datetime` / `format-datetime`
+  - Parse numbers and dates from any locale from the data source and convert them to text using full flexibility.
+- `choose`
+  - Choose between the result of two different expressions based on a condition (an 'if-else' statement within an expression).
+- `string-split` / `string-join`
+  - Split and join elements in a string based on a delimiter.
+- `lower-case` / `upper-case`
+  - Convert the text to lowercase or uppercase.
+- `list`
+  - Build a custom list of text values.
+
+See the manual for the full set of available functions.
+
+### Number formatting
+
+Support for formatting and parsing of numbers with locale-aware decimals/grouping using the new `format-number` and `parse-number` functions. The syntax for formatting numbers is very flexible and is similar to that used in Excel and other spreadsheet applications.
+
+Examples:
+- `${=format-number(1234.5,'#,##0.00')}` => `1,234.50`
+- `${=format-number(1234.5,'#,##0.00',',', '.')}` => `1.234,50`
+- `${=parse-number('1.234,50',',', '.')}` => `1234.5`
+
+> Note that for simplicity the first argument here is a hardcoded number, but typically this will be path to a value in the data source.
+
+### Date formatting
+
+Format and parse dates and times in any input and desired output format using the highly flexible `format-datetime` and `parse-datetime` functions. Full localization support with complete flexibility on naming of Months and Days.
+
+Examples:
+- `${=format-datetime('2025-06-15T14:30:00','[D] [MNn] [Y]')}` => `15 Jun 2025`
+- `${=format-datetime('2025-06-15T14:30:00','[FH]:[fm] [PN]')}` => `14:30 PM`
+- `${=parse-datetime('15/06/2025 14:30','[d]/[m]/[Y] [H]:[M]')}` => `2025-06-15T14:30:00`
+
+> Note that for simplicity the first argument here is a hardcoded date, but typically this will be path to a value in the data source.
+
+### System Variables
+
+In previous releases, Rxindi provided special System Attributes like `@rxc-index` to obtain runtime values like the current index in a LOOP. With this version these have now been migrated and further expanded to so-called System Variables, like `$x:index`. This offers several benefits:
+- System Variables have an explicit type (e.g. `number` for `$x:index`), while the old Attributes were always text-based.
+- Names of used System Variables are explicitly checked prior to processing, while incorrect Attributes would just silently give no value.
+- System Attributes "polluted" the data source context by adding processing information, System Variables keep the data source pure and clean. 
+
+The set of System Variables is significantly more extensive than the handful of System Attributes previous versions offered. All System Variables have the format `$x:<name>`. See the manual for info.
+
+> To ensure compatibility and a gradual transition, System Attributes will remain supported in this version. They are considered _deprecated_ though, and support for them may be removed in a future version. In [XPath mode](#xpath-mode) `strict` they are _not_ available.
+
+### Character Constants
+
+Rxindi now has an extensive set of useful constants that can be used directly, or as a part of a path expression for statements like OUTPUT. Constants have the format `$c:<name>`. Examples of constants are:
+- `$c:cr` - Paragraph Return 
+- `$c:lf` - Line Break
+- `$c:tab` - Tab
+
+See the manual for the full list.
+
+### XPath Mode
+
+Path expressions in templates are evaluated using `compatible` mode by default. This matches the custom string handling and boolean evaluation behavior of earlier versions of Rxindi, making upgrades smooth without requiring template changes.
+
+Mode `strict` follows the pure XPath 1.0 specification exactly and will give results that closer aligns to what you might expect if you are very familiar with XPath and/or using external XPath tooling. To enable `strict` mode for a template, add the following at root level (outside any block):
+
+```
+${!set:xpath-mode,strict}
+```
+
+See the `set` ACTION in the manual for details.
+
+### XML Namespaces
+
+XML namespaces are an integral part of many standard-compliant and enterprise XML documents. Previous versions of Rxindi could load XML documents with namespaces without issues, but due to lack of true support, using them in path expressions could be problematic.
+
+This version adds full support for XML Namespaces. Elements and attributes in a namespace can be addressed either using the full URI of the namespace as prefix: e.g. `{http://somenamespace}MyElement` or using the namespace prefix as it is defined in the XML document: e.g. `ns:MyElement`.
+
+### Extended Validation
+
+While Rxindi always has had a useful pre-processing validator that helped with incorrect statements, many other checks were previously only performed during actual processing. With this release a couple of important validations are now performed upfront, giving immediate feedback on issues:
+- Expression path syntax
+- Functions, including number of arguments
+- Variables
+- References to Components in PLACE statement
+
+Note that there are still many validations that still only happen during processing, but these new validations should provide much earlier feedback on some of the more frequent causes of issues during the template development phase.
+
+### No Escapes
+
+All previous versions of Rxindi required commas and semicolons, that were part of an argument to a Rxindi statement, to be "escaped" by preceding each one with a backslash - in all cases. This was necessary because commas and semicolons are also used to separate Rxindi statement arguments, and statements within a placeholder, respectively.
+
+Starting with this release, Rxindi is much smarter about understanding what the intention of commas and semicolons is, based on the context where they are used. Commas can now be used without any special prefix in expression function calls (e.g. `concat("Hello", "World")`), and both commas and semicolons can be used as-is in any quoted string: `'Hello, world;'`. 
+
+Both `\,` and `\;` are no longer recognized escape sequences with this release. If you want to use commas and semicolons in a Rxindi argument, just quote the entire argument.
+
+> This is a breaking change. To upgrade existing templates, remove the backslash prefixes in path expression function calls and ensure that commas and semicolons are quoted for other arguments. Alternatively, switch to v2.1 compatibility mode to process existing template without changes.
+
+Note: The only character that remains to **always** need explicit escaping is the closing brace: `\}`.
 
 ---
 # Previous releases
+
+**Version 2.1** | _2026-01-04_
+
+- Custom data root
+- Multi-record processing
+- Simplified literal strings for XPaths
 
 **Version 2.0.2** | _2025-11-28_
 
@@ -142,4 +251,4 @@ For any statement that takes an XPath as argument, e.g. `OUTPUT` and `EXPORT` `A
 - Initial release
 
 ---
-Copyright ® 2020-2025 Rxcle. All Rights Reserved.
+Copyright © 2020-2026 Rxcle. All Rights Reserved.

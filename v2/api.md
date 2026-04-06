@@ -1,6 +1,6 @@
 # Rxindi API
 
-Most Rxindi functions that are available from the Rxindi panel UI can also be invoked as commands through the standard InDesign Plug-ins panel and via scripting.
+Most Rxindi functions available from the Rxindi panel UI can also be invoked as commands through the standard InDesign Plug-ins panel or via scripting.
 
 The plugins panel can be activated via the `Plug-ins > Plugins Panel` menu and then expanding the `Rxindi` item. You can invoke a command by clicking on it. The table below lists the commands as they appear in the Plug-ins panel and their associated scripting names. Some commands take optional arguments; these can only be specified when the command is invoked via a script.
 
@@ -9,11 +9,11 @@ The plugins panel can be activated via the `Plug-ins > Plugins Panel` menu and t
 | Command                 | Scripting Name         | Arguments | Description                                                         |
 | ----------------------- | ---------------------- | --------- | ------------------------------------------------------------------- |
 | Help                    | `help`                 | -         | Opens the manual                                                    |
-| Load into XML Structure | `loadIntoXmlStructure` | Y         | Loads the data source into the XML Structure of the active document |
+| Load into XML Structure | `loadIntoXmlStructure` | Yes       | Loads the data source into the XML Structure of the active document |
 | Logs                    | `logs`                 | -         | Opens the folder that contains the log files                        |
-| Process Document        | `process`              | Y         | Process the current document                                        |
+| Process Document        | `process`              | Yes       | Process the current document                                        |
 | Reinitialize            | `reinitialize`         | -         | Reset Rxindi, clearing all settings                                 |
-| Validate Statements     | `validate`             | Y         | Validate Rxindi statements in the current document                  |
+| Validate Statements     | `validate`             | Yes       | Validate Rxindi statements in the current document                  |
 | Rxindi                  | -                      | -         | Shows the Rxindi panel                                              |
 
 ## Arguments
@@ -24,14 +24,16 @@ In scripting, the commands `loadIntoXmlStructure`, `process`, and `validate` acc
 | ---------------- | -------------------- | ----------------------------------------------------------------------------- | ------------ |
 | `datasource`     | `string` (file path) | Full path to the Data Source to use                                           | `""` (empty) |
 | `parameter`      | `string`             | Parameter value to use                                                        | `""` (empty) |
-| `compatVersion`  | `0`, `200`, `105`    | Compatibility version to use: 0=Latest, 200=v2.0, 105=v1.5                    | `0`          |
-| `mappingMode`    | `1`, `2`, `3`        | Mapping mode to use: 1=Classic, 2=Default, 3=Raw                              | `2`          |
+| `compatVersion`  | `0`, `201`, `105`    | Compatibility version to use: 0=Latest, 201=v2.1, 105=v1.5                    | `0`          |
+| `mappingMode` †  | (`1`,) `2`, `3`      | Mapping mode to use: 1=Classic, 2=Default, 3=Raw                              | `2`          |
 | `documentId`     | `number`             | ID of the template InDesign document to use, 0=Active document                | `0`          |
 | `allowModified`  | `boolean`            | Set to `true` to allow processing of a template document with unsaved changes | `false`      |
 | `finalizeScript` | `string` (file path) | Full path to a script to call when the action completed                       | `""` (empty) |
 | `finalizeAlways` | `boolean`            | Set to `true` to run the `finalizeScript` always, even in case of failure     | `false`      |
 | `finalizeArg`    | `string`             | Custom argument that is passed verbatim to the `finalizeScript`               | `""` (empty) |
 
+> † Mapping Mode Classic (1) is deprecated and will be removed in a future version. Please migrate templates to mode Default (2) or Raw (3).
+ 
 For all arguments, absence or a value of `undefined` means "keep current value" and `null` or an invalid value means "reset to default".
 
 > Note that command and argument names are case-sensitive!
@@ -61,7 +63,7 @@ app.doScript(
 'const pluginManager = require("uxp").pluginManager;' +
 'const plugin = Array.from(pluginManager.plugins).find(p => p.name === "Rxindi");' +
 'if (plugin) {' +
-'  plugin.invokeCommand("process", { dataSource: "c:\\docs\\mydoc.xml", parameter: "Hello", mappingMode: 3 });' +
+'  plugin.invokeCommand("process", { datasource: "c:\\docs\\mydoc.xml", parameter: "Hello", mappingMode: 3 });' +
 '}', ScriptLanguage.UXPSCRIPT);
 ```
 
@@ -70,7 +72,7 @@ app.doScript(
 The `finalizeScript` argument can be set to the path to a script file. This script is run as the very last step for the given command (e.g. processing). 
 
 - It must be written either in ExtendScript (.jsx/.js) or UXP Script (.idjs) format - AppleScript (or Visual Basic) are not supported
-- The path provided here _must_ be an absolute path - relative paths are not supported
+- The path provided here _must_ be an absolute path; relative paths are not supported
   
 By default, the `finalizeScript` is only executed when the base action succeeded. By setting the `finalizeAlways` argument to `true` the script is _always_ executed, even if the base action failed. 
 The following arguments are automatically supplied to this script. Note that these arguments are passed _by index_ only, the indicated name is for descriptive purposes only. 
@@ -103,4 +105,4 @@ The return value of the script is _ignored_. Throw an error to indicate failure.
 Rxindi v1.5 offers a different, more limited, API, which is exposed via ExtendScript using the `ExternalObject` mechanism. This API is **not supported** in Rxindi v2.0, not even in v1.5 compatibility mode.
 
 ---
-Copyright ® 2020-2026 Rxcle. All Rights Reserved.
+Copyright © 2020-2026 Rxcle. All Rights Reserved.
